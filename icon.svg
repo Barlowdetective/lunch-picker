@@ -1,0 +1,23 @@
+<svg width="512" height="512" viewBox="0 0 512 512" role="img" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="112" fill="#F5F0E8"/>
+  <rect x="56" y="56" width="400" height="400" rx="84" fill="#1A1410"/>
+  <rect x="80" y="80" width="352" height="352" rx="68" fill="#FAF7F2"/>
+  <rect x="96" y="96" width="320" height="8" rx="4" fill="#C8341A"/>
+  <rect x="116" y="148" width="280" height="236" rx="36" fill="#F5F0E8" stroke="#D8D0C4" stroke-width="2.5"/>
+  <circle cx="192" cy="210" r="18" fill="#1A1410"/>
+  <circle cx="320" cy="210" r="18" fill="#1A1410"/>
+  <circle cx="256" cy="266" r="18" fill="#C8341A"/>
+  <circle cx="192" cy="322" r="18" fill="#1A1410"/>
+  <circle cx="320" cy="322" r="18" fill="#1A1410"/>
+  <g transform="translate(84,216) rotate(-16)">
+    <rect x="-5" y="0" width="10" height="72" rx="5" fill="#D4A94A"/>
+    <rect x="-5" y="-48" width="3.5" height="38" rx="2" fill="#D4A94A"/>
+    <rect x="1.5" y="-48" width="3.5" height="38" rx="2" fill="#D4A94A"/>
+    <rect x="-5" y="-14" width="10" height="5" rx="2" fill="#D4A94A"/>
+  </g>
+  <g transform="translate(428,216) rotate(16)">
+    <rect x="-5" y="0" width="10" height="72" rx="5" fill="#D4A94A"/>
+    <ellipse cx="0" cy="-24" rx="10" ry="14" fill="#D4A94A"/>
+  </g>
+  <text x="256" y="456" text-anchor="middle" font-family="Georgia,serif" font-size="34" font-weight="900" letter-spacing="-1" fill="#1A1410">Lunch<tspan fill="#C8341A">.</tspan></text>
+</svg>

@@ -1,0 +1,3035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lunch.">
+<meta name="theme-color" content="#1A1410">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.json">
+<title>What's for Lunch?</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F5F0E8;
+    --ink: #1A1410;
+    --red: #C8341A;
+    --gold: #D4A94A;
+    --sage: #7A8C6E;
+    --muted: #8A8178;
+    --paper: #FAF7F2;
+    --border: #D8D0C4;
+  }
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.6;
+  }
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding: 18px 40px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .masthead-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .masthead-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  .masthead-title span { color: var(--red); }
+  .hero {
+    padding: 60px 40px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+  }
+  .hero-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 8vw, 88px);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+  }
+  .hero-headline em { font-style: italic; color: var(--red); }
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 380px;
+    line-height: 1.6;
+  }
+  .filter-strip {
+    padding: 0 40px;
+    max-width: 900px;
+    margin: 0 auto 40px;
+  }
+  .filter-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 18px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+  .main {
+    padding: 0 40px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .result-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--red);
+    padding: 48px;
+    min-height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .result-card::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 60px solid var(--cream);
+    opacity: 0.5;
+  }
+  .result-placeholder { text-align: center; }
+  .result-placeholder-icon { font-size: 56px; display: block; margin-bottom: 16px; opacity: 0.35; }
+  .result-placeholder p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--muted);
+  }
+  .result-content { width: 100%; display: none; animation: slideUp 0.45s cubic-bezier(0.16,1,0.3,1) both; }
+  @keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  .result-content.show { display: block; }
+  .result-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .result-category {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 4px 12px;
+  }
+  .result-time, .result-cal {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .result-photo-wrap {
+    float: right;
+    margin: -8px 0 16px 28px;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 140px;
+    height: 140px;
+  }
+  .result-photo {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border: 2px solid var(--border);
+    border-top: 4px solid var(--red);
+    display: block;
+    background: var(--cream);
+  }
+  .result-photo.loading {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .result-photo.loaded {
+    opacity: 1;
+  }
+  .result-photo-fallback, .result-photo-spinner {
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    border: 2px solid var(--border);
+    border-top: 4px solid var(--red);
+    background: var(--cream);
+  }
+  .result-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.0;
+    margin-bottom: 20px;
+    position: relative; z-index: 1;
+  }
+  .result-desc {
+    font-size: 15px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.7;
+    max-width: 480px;
+    position: relative; z-index: 1;
+    margin-bottom: 20px;
+  }
+  .result-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .result-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 4px 12px;
+  }
+  /* AllRecipes link */
+  .allrecipes-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 9px 18px;
+    transition: all 0.2s;
+    position: relative;
+    z-index: 1;
+  }
+  .allrecipes-link:hover { border-color: #E4231F; color: #E4231F; }
+  .allrecipes-link svg { flex-shrink: 0; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+  /* AllRecipes footer in recipe drawer */
+  .allrecipes-drawer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #E4231F;
+    text-decoration: none;
+    border: 1px solid #E4231F;
+    padding: 10px 20px;
+    margin-top: 24px;
+    transition: all 0.2s;
+  }
+  .allrecipes-drawer-link:hover { background: #E4231F; color: white; }
+
+  /* YouTube button */
+  .youtube-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 9px 18px;
+    transition: all 0.2s;
+    position: relative;
+    z-index: 1;
+  }
+  .youtube-link:hover { border-color: #FF0000; color: #FF0000; }
+  .youtube-link svg { flex-shrink: 0; }
+
+  /* Recipe button inside card */
+  .recipe-toggle-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative; z-index: 1;
+  }
+  .recipe-toggle-btn:hover { background: var(--ink); color: var(--cream); }
+
+  /* Recipe drawer */
+  .recipe-drawer {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-top: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.16,1,0.3,1), padding 0.3s;
+    margin-bottom: 0;
+  }
+  .recipe-drawer.open {
+    max-height: 2000px;
+    margin-bottom: 32px;
+  }
+  .recipe-inner { padding: 40px 48px; }
+  .recipe-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .recipe-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  .recipe-title em { font-style: italic; color: var(--red); }
+  .recipe-serves {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .serves-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .serves-btn {
+    width: 24px; height: 24px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    color: var(--ink);
+  }
+  .serves-btn:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .serves-num { font-weight: 500; min-width: 20px; text-align: center; }
+
+  .recipe-body { display: grid; grid-template-columns: 1fr 1.6fr; gap: 40px; }
+  .ingredients-section h3, .steps-section h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+  }
+  .ingredient-list { list-style: none; }
+  .ingredient-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    gap: 12px;
+  }
+  .ingredient-list li:last-child { border-bottom: none; }
+  .ing-name { color: var(--ink); font-weight: 400; }
+  .ing-qty {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .steps-list { list-style: none; counter-reset: steps; }
+  .steps-list li {
+    counter-increment: steps;
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .steps-list li::before {
+    content: counter(steps);
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--border);
+    min-width: 28px;
+    line-height: 1.1;
+    flex-shrink: 0;
+  }
+  .tip-box {
+    margin-top: 24px;
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .tip-box strong {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Counters */
+  .counter-strip { display: flex; margin-bottom: 40px; border: 1px solid var(--border); overflow: hidden; }
+  .counter-item { flex: 1; padding: 16px 20px; border-right: 1px solid var(--border); background: var(--paper); }
+  .counter-item:last-child { border-right: none; }
+  .counter-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 900;
+    letter-spacing: -0.02em; line-height: 1; margin-bottom: 4px;
+  }
+  .counter-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  /* 3D Dice */
+  .dice-scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0 8px;
+    gap: 18px;
+    user-select: none;
+  }
+  .dice-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .dice-scene:hover .dice-hint { color: var(--red); }
+
+  .dice-wrap {
+    perspective: 600px;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+  }
+  .dice-3d {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(20deg) rotateY(20deg);
+    transition: transform 0.15s ease;
+    animation: dice-idle 8s ease-in-out infinite;
+  }
+  @keyframes dice-idle {
+    0%   { transform: rotateX(20deg) rotateY(20deg); }
+    25%  { transform: rotateX(20deg) rotateY(110deg); }
+    50%  { transform: rotateX(110deg) rotateY(110deg); }
+    75%  { transform: rotateX(110deg) rotateY(20deg); }
+    100% { transform: rotateX(20deg) rotateY(20deg); }
+  }
+  .dice-3d.rolling {
+    animation: dice-roll 0.7s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  @keyframes dice-roll {
+    0%   { transform: rotateX(0deg) rotateY(0deg) scale(1); }
+    20%  { transform: rotateX(180deg) rotateY(120deg) scale(1.15); }
+    50%  { transform: rotateX(400deg) rotateY(280deg) scale(1.2); }
+    80%  { transform: rotateX(620deg) rotateY(400deg) scale(1.1); }
+    100% { transform: rotateX(720deg) rotateY(540deg) scale(1); }
+  }
+  .dice-wrap:hover .dice-3d:not(.rolling) {
+    animation-play-state: paused;
+    transform: rotateX(30deg) rotateY(40deg) scale(1.08);
+    transition: transform 0.3s ease;
+  }
+
+  .dice-face {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: var(--paper);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    backface-visibility: visible;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .dice-face .pips {
+    display: grid;
+    width: 72px;
+    height: 72px;
+    gap: 6px;
+  }
+  .pip {
+    width: 13px;
+    height: 13px;
+    background: var(--ink);
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .pip.red { background: var(--red); }
+
+  /* face positions */
+  .face-front  { transform: translateZ(50px); }
+  .face-back   { transform: rotateY(180deg) translateZ(50px); }
+  .face-right  { transform: rotateY(90deg) translateZ(50px); }
+  .face-left   { transform: rotateY(-90deg) translateZ(50px); }
+  .face-top    { transform: rotateX(90deg) translateZ(50px); }
+  .face-bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+  /* face-front = 1 */
+  .face-front .pips { grid-template-columns: 1fr; grid-template-rows: 1fr; place-items: center; }
+  /* face-back = 6 */
+  .face-back .pips { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+  /* face-right = 2 */
+  .face-right .pips { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  .face-right .pip:nth-child(2) { visibility: hidden; }
+  .face-right .pip:nth-child(3) { visibility: hidden; }
+  /* face-left = 5 */
+  .face-left .pips { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+  .face-left .pip:nth-child(2) { visibility: hidden; }
+  .face-left .pip:nth-child(4) { visibility: hidden; }
+  /* face-top = 3 */
+  .face-top .pips { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; }
+  .face-top .pip:nth-child(2) { visibility: hidden; }
+  .face-top .pip:nth-child(4) { visibility: hidden; }
+  .face-top .pip:nth-child(5) { visibility: hidden; }
+  .face-top .pip:nth-child(6) { visibility: hidden; }
+  /* face-bottom = 4 */
+  .face-bottom .pips { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+  .again-btn {
+    margin-top: 8px; width: 100%;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 14px; cursor: pointer; transition: all 0.2s;
+  }
+  .again-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* History */
+  .history-section { margin-top: 48px; border-top: 1px solid var(--border); padding-top: 24px; display: none; }
+  .history-section.show { display: block; }
+  .history-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+  }
+  .history-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .history-item {
+    font-size: 12px; color: var(--muted);
+    border: 1px solid var(--border); padding: 5px 14px;
+    background: var(--paper); cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .history-item:hover { border-color: var(--ink); color: var(--ink); }
+  .history-item .h-emoji { font-size: 14px; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 900px; margin: 0 auto;
+  }
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .flash {
+    position: fixed; inset: 0;
+    background: var(--red); z-index: 200;
+    pointer-events: none; opacity: 0; transition: opacity 0.1s;
+  }
+  .flash.show { opacity: 0.06; }
+
+  /* ── Fridge Feature ── */
+  .fridge-strip {
+    padding: 0 40px;
+    max-width: 900px;
+    margin: 0 auto 40px;
+  }
+  .fridge-toggle {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 13px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+  }
+  .fridge-toggle:hover { border-color: var(--sage); color: var(--sage); }
+  .fridge-toggle.active { border-color: var(--sage); color: var(--sage); background: rgba(122,140,110,0.06); }
+  .fridge-toggle .ft-left { display: flex; align-items: center; gap: 10px; }
+  .fridge-toggle .ft-arrow { transition: transform 0.3s; font-style: normal; }
+  .fridge-toggle.active .ft-arrow { transform: rotate(180deg); }
+
+  .fridge-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.16,1,0.3,1);
+    border: 1px dashed transparent;
+    border-top: none;
+  }
+  .fridge-panel.open {
+    max-height: 600px;
+    border-color: var(--sage);
+    border-top: none;
+  }
+  .fridge-inner { padding: 28px 28px 24px; }
+
+  .fridge-input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .fridge-input {
+    flex: 1;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .fridge-input:focus { border-color: var(--sage); }
+  .fridge-input::placeholder { color: var(--muted); }
+  .fridge-search-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--sage);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .fridge-search-btn:hover { opacity: 0.85; }
+
+  .fridge-threshold { margin-bottom: 20px; }
+  .fridge-threshold-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .fridge-threshold-label span { color: var(--sage); font-weight: 500; }
+  input[type=range].fridge-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 3px;
+    background: var(--border);
+    outline: none;
+    border-radius: 2px;
+  }
+  input[type=range].fridge-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--sage);
+    cursor: pointer;
+  }
+
+  .fridge-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; min-height: 0; }
+  .fridge-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    background: rgba(122,140,110,0.12);
+    color: var(--sage);
+    border: 1px solid rgba(122,140,110,0.35);
+    padding: 5px 12px;
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .fridge-chip:hover { background: rgba(122,140,110,0.22); }
+  .fridge-chip .rm { font-size: 14px; line-height: 1; opacity: 0.6; }
+
+  .fridge-results { border-top: 1px solid var(--border); padding-top: 20px; }
+  .fridge-results-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .fridge-meal-list { display: flex; flex-direction: column; gap: 10px; }
+  .fridge-meal-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .fridge-meal-row:hover { border-color: var(--sage); }
+  .fridge-meal-row.top-match { border-color: var(--sage); border-left: 4px solid var(--sage); }
+  .fridge-meal-emoji { font-size: 24px; flex-shrink: 0; }
+  .fridge-meal-info { flex: 1; min-width: 0; }
+  .fridge-meal-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .fridge-meal-matched {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--sage);
+  }
+  .fridge-meal-matched .missing { color: var(--muted); }
+  .fridge-match-bar-wrap { width: 60px; flex-shrink: 0; text-align: right; }
+  .fridge-match-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--sage);
+    line-height: 1;
+  }
+  .fridge-match-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .fridge-no-results {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--muted);
+    text-align: center;
+    padding: 16px 0;
+  }
+
+  @media (max-width: 640px) {
+    .masthead { padding: 14px 20px; }
+    .hero { padding: 40px 20px 20px; }
+    .filter-strip, .fridge-strip { padding: 0 20px; }
+    .main { padding: 0 20px 60px; }
+    .result-card { padding: 24px; min-height: 260px; }
+    .result-emoji { font-size: 44px; }
+    .recipe-inner { padding: 24px 20px; }
+    .recipe-body { grid-template-columns: 1fr; gap: 24px; }
+    footer { padding: 16px 20px; flex-direction: column; gap: 8px; }
+    .counter-strip { flex-wrap: wrap; }
+    .counter-item { min-width: 50%; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<div class="flash" id="flash"></div>
+
+<header class="masthead">
+  <span class="masthead-tag">Vol. 1 — Daily Edition</span>
+  <div class="masthead-title">Lunch<span>.</span></div>
+  <span class="masthead-tag" id="date-display"></span>
+</header>
+
+<section class="hero">
+  <p class="hero-kicker">✦ The Daily Decider ✦</p>
+  <h1 class="hero-headline">What's<br>for <em>lunch</em><br>today?</h1>
+  <p class="hero-sub">Let fate handle the hard part. One click, one meal, full recipe — no overthinking, no regrets.</p>
+</section>
+
+<div class="filter-strip">
+  <p class="filter-label">✦ Filter by mood</p>
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-cat="all">Everything</button>
+    <button class="filter-btn" data-cat="japanese">🇯🇵 Japanese</button>
+    <button class="filter-btn" data-cat="korean">🇰🇷 Korean</button>
+    <button class="filter-btn" data-cat="chinese">🇨🇳 Chinese</button>
+    <button class="filter-btn" data-cat="vietnamese">🇻🇳 Vietnamese</button>
+    <button class="filter-btn" data-cat="thai">🇹🇭 Thai</button>
+    <button class="filter-btn" data-cat="italian">🇮🇹 Italian</button>
+    <button class="filter-btn" data-cat="mexican">🇲🇽 Mexican</button>
+    <button class="filter-btn" data-cat="middleeastern">🫙 Middle Eastern</button>
+    <button class="filter-btn" data-cat="mediterranean">🫒 Mediterranean</button>
+    <button class="filter-btn" data-cat="western">🍔 Western</button>
+    <button class="filter-btn" data-cat="healthy">🥗 Healthy</button>
+    <button class="filter-btn" data-cat="comfort">😌 Comfort</button>
+    <button class="filter-btn" data-cat="quick">⚡ Quick &lt;15 min</button>
+    <button class="filter-btn" data-cat="vegetarian">🌱 Vegetarian</button>
+  </div>
+</div>
+
+<!-- ── Fridge Matcher ── -->
+<div class="fridge-strip">
+  <button class="fridge-toggle" id="fridge-toggle" onclick="toggleFridge()">
+    <span class="ft-left">🧊 <span>What's in my fridge? Match meals to ingredients I have</span></span>
+    <span class="ft-arrow">▾</span>
+  </button>
+  <div class="fridge-panel" id="fridge-panel">
+    <div class="fridge-inner">
+
+      <div class="fridge-input-row">
+        <input class="fridge-input" id="fridge-input" type="text"
+          placeholder="e.g. eggs, chicken, rice, avocado, soy sauce…"
+          onkeydown="if(event.key==='Enter')addFridgeIngredients()" />
+        <button class="fridge-search-btn" onclick="addFridgeIngredients()">Add ✦</button>
+      </div>
+
+      <div class="fridge-chips" id="fridge-chips"></div>
+
+      <div class="fridge-threshold">
+        <div class="fridge-threshold-label">
+          <span>Minimum ingredient match</span>
+          <span id="threshold-val">2 ingredients</span>
+        </div>
+        <input type="range" class="fridge-slider" id="fridge-slider" min="1" max="6" value="2"
+          oninput="updateThreshold(this.value)" />
+      </div>
+
+      <div class="fridge-results" id="fridge-results" style="display:none;"></div>
+
+    </div>
+  </div>
+</div>
+
+<main class="main">
+  <div class="counter-strip">
+    <div class="counter-item"><div class="counter-num" id="cnt-total">55</div><div class="counter-label">Total meals</div></div>
+    <div class="counter-item"><div class="counter-num" id="cnt-avail">55</div><div class="counter-label">Available</div></div>
+    <div class="counter-item"><div class="counter-num" id="cnt-spins">0</div><div class="counter-label">Spins today</div></div>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="result-placeholder" id="placeholder">
+      <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:18px;color:var(--muted);">Roll the dice to decide</p>
+    </div>
+    <div class="result-content" id="result-content"></div>
+  </div>
+
+  <!-- Recipe drawer sits outside the card, below it -->
+  <div class="recipe-drawer" id="recipe-drawer">
+    <div class="recipe-inner" id="recipe-inner"></div>
+  </div>
+
+  <!-- 3D Dice -->
+  <div class="dice-scene">
+    <div class="dice-wrap" onclick="spin()" title="Roll the dice!">
+      <div class="dice-3d" id="dice3d">
+        <div class="dice-face face-front">
+          <div class="pips"><div class="pip red"></div></div>
+        </div>
+        <div class="dice-face face-back">
+          <div class="pips">
+            <div class="pip"></div><div class="pip"></div>
+            <div class="pip"></div><div class="pip"></div>
+            <div class="pip"></div><div class="pip"></div>
+          </div>
+        </div>
+        <div class="dice-face face-right">
+          <div class="pips">
+            <div class="pip"></div><div class="pip"></div>
+            <div class="pip"></div><div class="pip"></div>
+          </div>
+        </div>
+        <div class="dice-face face-left">
+          <div class="pips">
+            <div class="pip"></div><div class="pip"></div>
+            <div class="pip"></div><div class="pip"></div>
+            <div class="pip"></div><div class="pip"></div>
+          </div>
+        </div>
+        <div class="dice-face face-top">
+          <div class="pips">
+            <div class="pip"></div><div class="pip"></div>
+            <div class="pip"></div><div class="pip"></div>
+            <div class="pip"></div><div class="pip"></div>
+          </div>
+        </div>
+        <div class="dice-face face-bottom">
+          <div class="pips">
+            <div class="pip"></div><div class="pip"></div>
+            <div class="pip"></div><div class="pip"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="dice-hint" id="dice-hint">Click to roll</span>
+  </div>
+  <button class="again-btn" id="again-btn" onclick="spin()" style="display:none;">— Not feeling it? Roll again —</button>
+
+  <div class="history-section" id="history-section">
+    <p class="history-label">✦ Today's picks</p>
+    <div class="history-list" id="history-list"></div>
+  </div>
+</main>
+
+<footer>
+  <p>Powered by indecision &amp; chance</p>
+  <p id="footer-count">20 meals in the deck</p>
+</footer>
+
+<script>
+const meals = [
+  {
+    name: "Tonkotsu Ramen", desc: "Rich pork broth simmered for hours, chewy noodles, chashu pork, soft-boiled egg, nori and green onion.", emoji: "🍜", cats: ["asian","comfort"], time: "25 min", cal: "580 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Ramen noodles (fresh or dried)", qty: "200 g" },
+      { name: "Tonkotsu broth (store-bought)", qty: "800 ml" },
+      { name: "Chashu pork belly, sliced", qty: "4 slices" },
+      { name: "Eggs", qty: "2" },
+      { name: "Nori sheets", qty: "2" },
+      { name: "Green onions, sliced", qty: "2 stalks" },
+      { name: "Sesame seeds", qty: "1 tsp" },
+      { name: "Soy sauce", qty: "1 tbsp" },
+      { name: "Sesame oil", qty: "1 tsp" },
+    ],
+    steps: [
+      "Soft-boil eggs: bring water to a boil, add eggs and cook 7 minutes, then transfer to ice water. Peel and halve.",
+      "Warm the tonkotsu broth in a pot over medium heat. Season with soy sauce. Do not boil.",
+      "Cook ramen noodles according to package directions. Drain and divide between two bowls.",
+      "Ladle the hot broth over the noodles.",
+      "Top each bowl with chashu slices, a halved egg, nori, and green onions.",
+      "Finish with a drizzle of sesame oil and a sprinkle of sesame seeds. Serve immediately."
+    ],
+    tip: "For deeper flavour, marinate the peeled soft-boiled eggs overnight in equal parts soy sauce, mirin and water."
+  },
+  {
+    name: "Avocado Toast", desc: "Smashed avocado on thick-cut sourdough with chilli flakes, lemon, and a perfectly poached egg.", emoji: "🥑", cats: ["healthy","quick","vegetarian","western"], time: "8 min", cal: "380 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Sourdough bread, thick slices", qty: "2" },
+      { name: "Ripe avocados", qty: "2" },
+      { name: "Eggs", qty: "2" },
+      { name: "Lemon juice", qty: "1 tbsp" },
+      { name: "Chilli flakes", qty: "¼ tsp" },
+      { name: "Sea salt & black pepper", qty: "to taste" },
+      { name: "White vinegar (for poaching)", qty: "1 tbsp" },
+    ],
+    steps: [
+      "Toast sourdough slices until golden and crisp.",
+      "Halve avocados, remove stones, scoop flesh into a bowl. Add lemon juice, salt and pepper. Smash with a fork — keep it chunky.",
+      "Bring a small saucepan of water to a gentle simmer. Add vinegar. Create a gentle swirl and slide in one egg. Poach 3 minutes for a runny yolk. Repeat for second egg.",
+      "Spread smashed avocado generously over each toast.",
+      "Top with a poached egg, chilli flakes, and a pinch of flaky salt."
+    ],
+    tip: "Add a smear of ricotta under the avocado for extra creaminess, or a drizzle of good olive oil on top."
+  },
+  {
+    name: "Caesar Salad", desc: "Crisp romaine, shaved parmesan, anchovy-garlic dressing, and golden croutons.", emoji: "🥗", cats: ["healthy","western"], time: "10 min", cal: "320 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Romaine lettuce, torn", qty: "1 head" },
+      { name: "Parmesan, shaved", qty: "40 g" },
+      { name: "Croutons", qty: "60 g" },
+      { name: "Anchovy fillets", qty: "3" },
+      { name: "Garlic clove", qty: "1" },
+      { name: "Mayonnaise", qty: "3 tbsp" },
+      { name: "Lemon juice", qty: "1 tbsp" },
+      { name: "Worcestershire sauce", qty: "1 tsp" },
+      { name: "Black pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Make the dressing: mash anchovies and garlic into a paste. Whisk together with mayonnaise, lemon juice and Worcestershire sauce. Season with pepper.",
+      "Tear romaine into a large bowl. Add most of the parmesan.",
+      "Drizzle dressing over the lettuce and toss until every leaf is coated.",
+      "Top with croutons and remaining parmesan. Serve straight away."
+    ],
+    tip: "For extra depth, char a halved romaine head cut-side down on a grill pan for 2 minutes before tossing."
+  },
+  {
+    name: "Grilled Cheese", desc: "Sourdough with sharp cheddar and gruyère, buttered and pressed until perfectly golden and oozy.", emoji: "🧀", cats: ["comfort","quick","western","vegetarian"], time: "8 min", cal: "450 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Sourdough bread, sliced", qty: "4 slices" },
+      { name: "Sharp cheddar, grated", qty: "60 g" },
+      { name: "Gruyère, grated", qty: "60 g" },
+      { name: "Butter, softened", qty: "2 tbsp" },
+      { name: "Dijon mustard (optional)", qty: "1 tsp" },
+    ],
+    steps: [
+      "Mix cheddar and gruyère together. Spread butter on the outside of all four bread slices.",
+      "Optionally spread a thin layer of Dijon on the inside of two slices.",
+      "Pile cheese onto the unbuttered sides and press sandwiches together.",
+      "Heat a pan over medium-low heat. Cook sandwiches 3–4 minutes per side, pressing with a spatula, until deeply golden and cheese is fully melted.",
+      "Rest 1 minute before cutting to let the cheese set slightly."
+    ],
+    tip: "Use medium-low heat only — high heat browns the bread before the cheese melts."
+  },
+  {
+    name: "Poke Bowl", desc: "Fresh tuna over sushi rice with edamame, cucumber, avocado, sesame oil and ponzu sauce.", emoji: "🐟", cats: ["asian","healthy"], time: "15 min", cal: "420 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Sushi-grade tuna, cubed", qty: "300 g" },
+      { name: "Cooked sushi rice", qty: "300 g" },
+      { name: "Edamame (shelled)", qty: "80 g" },
+      { name: "Cucumber, sliced", qty: "½" },
+      { name: "Avocado, sliced", qty: "1" },
+      { name: "Soy sauce", qty: "2 tbsp" },
+      { name: "Sesame oil", qty: "1 tbsp" },
+      { name: "Ponzu sauce", qty: "1 tbsp" },
+      { name: "Sesame seeds", qty: "1 tsp" },
+      { name: "Green onion, sliced", qty: "1 stalk" },
+    ],
+    steps: [
+      "Mix tuna with soy sauce, sesame oil, and ponzu in a bowl. Let marinate 5 minutes.",
+      "Divide warm sushi rice between two bowls.",
+      "Arrange tuna, edamame, cucumber, and avocado in sections over the rice.",
+      "Drizzle any remaining marinade over the top.",
+      "Garnish with sesame seeds and green onion."
+    ],
+    tip: "For the best texture, don't marinate the tuna more than 15 minutes — the citrus in ponzu starts to 'cook' the fish."
+  },
+  {
+    name: "BLT Sandwich", desc: "Thick-cut bacon, iceberg lettuce, ripe tomato and mayo on lightly toasted white bread.", emoji: "🥪", cats: ["quick","western","comfort"], time: "7 min", cal: "390 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "White sandwich bread", qty: "4 slices" },
+      { name: "Thick-cut bacon", qty: "6 rashers" },
+      { name: "Iceberg lettuce leaves", qty: "4" },
+      { name: "Ripe tomato, sliced", qty: "1 large" },
+      { name: "Mayonnaise", qty: "3 tbsp" },
+      { name: "Salt & black pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Cook bacon in a dry pan over medium-high heat until crispy. Drain on paper towels.",
+      "Toast bread slices until lightly golden.",
+      "Spread mayo generously on all four slices.",
+      "Layer lettuce, tomato slices (season with salt and pepper), and bacon on two slices.",
+      "Top with remaining bread, press lightly, and cut diagonally."
+    ],
+    tip: "Season the tomato slices with salt while the bacon cooks — it draws out moisture and concentrates the flavour."
+  },
+  {
+    name: "Pad Thai", desc: "Wok-tossed rice noodles with shrimp, egg, bean sprouts, peanuts, lime and fish sauce.", emoji: "🍝", cats: ["asian"], time: "20 min", cal: "520 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Rice noodles (medium width)", qty: "200 g" },
+      { name: "Shrimp, peeled & deveined", qty: "200 g" },
+      { name: "Eggs", qty: "2" },
+      { name: "Bean sprouts", qty: "100 g" },
+      { name: "Fish sauce", qty: "3 tbsp" },
+      { name: "Tamarind paste", qty: "2 tbsp" },
+      { name: "Palm or brown sugar", qty: "1 tbsp" },
+      { name: "Crushed peanuts", qty: "3 tbsp" },
+      { name: "Lime wedges", qty: "2" },
+      { name: "Green onions, sliced", qty: "2 stalks" },
+      { name: "Vegetable oil", qty: "2 tbsp" },
+    ],
+    steps: [
+      "Soak rice noodles in warm water 20 minutes until pliable. Drain.",
+      "Mix fish sauce, tamarind paste, and sugar to make the sauce. Set aside.",
+      "Heat oil in a wok over high heat. Stir-fry shrimp until pink, about 2 minutes. Push to side.",
+      "Crack in eggs, scramble lightly, then mix with shrimp.",
+      "Add noodles and pour sauce over. Toss everything together until noodles are coated and heated through, 2–3 minutes.",
+      "Fold in bean sprouts and green onions off the heat.",
+      "Plate and top with crushed peanuts. Serve with lime wedges."
+    ],
+    tip: "High heat is essential for proper wok char. If your pan isn't hot enough, cook in two batches rather than crowding."
+  },
+  {
+    name: "Greek Salad Wrap", desc: "Creamy feta, kalamata olives, cucumber, tomato and hummus rolled in a warm flatbread.", emoji: "🫔", cats: ["healthy","quick","western","vegetarian"], time: "6 min", cal: "360 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Large flatbreads or tortillas", qty: "2" },
+      { name: "Feta cheese, crumbled", qty: "80 g" },
+      { name: "Kalamata olives, halved", qty: "60 g" },
+      { name: "Cucumber, diced", qty: "½" },
+      { name: "Cherry tomatoes, halved", qty: "8" },
+      { name: "Hummus", qty: "4 tbsp" },
+      { name: "Red onion, thinly sliced", qty: "¼" },
+      { name: "Dried oregano", qty: "½ tsp" },
+      { name: "Olive oil", qty: "1 tbsp" },
+    ],
+    steps: [
+      "Warm flatbreads in a dry pan for 30 seconds per side, or wrap in a damp paper towel and microwave 20 seconds.",
+      "Toss cucumber, tomatoes, olives, red onion and feta with olive oil and oregano.",
+      "Spread 2 tablespoons of hummus over each flatbread, leaving a border.",
+      "Pile the salad mixture onto the centre of each wrap.",
+      "Fold in the sides, then roll up tightly. Cut diagonally and serve."
+    ],
+    tip: "For a heartier wrap, add a few slices of grilled chicken or a handful of roasted chickpeas."
+  },
+  {
+    name: "Bibimbap", desc: "Steamed rice topped with sautéed vegetables, a runny fried egg, and a bold gochujang sauce.", emoji: "🍚", cats: ["asian","healthy","vegetarian"], time: "25 min", cal: "490 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Cooked short-grain rice", qty: "300 g" },
+      { name: "Eggs", qty: "2" },
+      { name: "Spinach", qty: "100 g" },
+      { name: "Carrot, julienned", qty: "1" },
+      { name: "Zucchini, julienned", qty: "½" },
+      { name: "Shiitake mushrooms, sliced", qty: "80 g" },
+      { name: "Bean sprouts", qty: "60 g" },
+      { name: "Gochujang paste", qty: "2 tbsp" },
+      { name: "Sesame oil", qty: "2 tsp" },
+      { name: "Soy sauce", qty: "1 tbsp" },
+      { name: "Sesame seeds", qty: "1 tsp" },
+    ],
+    steps: [
+      "Make the sauce: mix gochujang with 1 tsp sesame oil, soy sauce, and a splash of water.",
+      "Blanch spinach and bean sprouts separately in salted water 30 seconds. Squeeze dry. Season with sesame oil.",
+      "Sauté carrots, zucchini and mushrooms in a little oil until just tender. Season lightly.",
+      "Fry eggs sunny-side up in a non-stick pan.",
+      "Divide rice between two bowls. Arrange vegetables in sections around the rice.",
+      "Top each bowl with a fried egg and a spoonful of gochujang sauce. Sprinkle sesame seeds.",
+      "Mix everything together vigorously before eating."
+    ],
+    tip: "For crispy rice, use a hot stone bowl (dolsot) brushed with sesame oil, or cook the rice over medium heat for 2 minutes at the end."
+  },
+  {
+    name: "Mac & Cheese", desc: "Creamy four-cheese béchamel tossed with rigatoni, baked with a golden panko crust.", emoji: "🧆", cats: ["comfort","western","vegetarian"], time: "30 min", cal: "600 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Rigatoni or macaroni", qty: "350 g" },
+      { name: "Butter", qty: "3 tbsp" },
+      { name: "Plain flour", qty: "3 tbsp" },
+      { name: "Whole milk", qty: "600 ml" },
+      { name: "Cheddar, grated", qty: "120 g" },
+      { name: "Gruyère, grated", qty: "80 g" },
+      { name: "Parmesan, grated", qty: "40 g" },
+      { name: "Cream cheese", qty: "2 tbsp" },
+      { name: "Panko breadcrumbs", qty: "60 g" },
+      { name: "Mustard powder", qty: "½ tsp" },
+      { name: "Salt, pepper, nutmeg", qty: "to taste" },
+    ],
+    steps: [
+      "Cook pasta in salted water 2 minutes less than package directions. Drain, reserving ½ cup pasta water.",
+      "Melt butter in a saucepan over medium heat. Whisk in flour and cook 1 minute.",
+      "Gradually whisk in milk. Simmer, stirring, until thick, about 5 minutes.",
+      "Remove from heat. Stir in cheddar, gruyère, cream cheese and mustard powder until smooth. Season with salt, pepper and nutmeg.",
+      "Fold in pasta. Add pasta water as needed for a looser sauce.",
+      "Pour into a baking dish. Top with parmesan and panko.",
+      "Grill (broil) on high 4–5 minutes until golden and bubbling. Rest 5 minutes before serving."
+    ],
+    tip: "Don't skip the resting time — it lets the sauce thicken to the perfect scoopable consistency."
+  },
+  {
+    name: "Tomato Soup", desc: "Silky roasted tomato and basil soup with a crusty sourdough roll for dunking.", emoji: "🍅", cats: ["comfort","western","vegetarian","quick"], time: "12 min", cal: "310 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Canned plum tomatoes (400g)", qty: "2 tins" },
+      { name: "Onion, chopped", qty: "1" },
+      { name: "Garlic cloves", qty: "3" },
+      { name: "Vegetable stock", qty: "300 ml" },
+      { name: "Butter", qty: "1 tbsp" },
+      { name: "Olive oil", qty: "1 tbsp" },
+      { name: "Fresh basil", qty: "small bunch" },
+      { name: "Heavy cream", qty: "3 tbsp" },
+      { name: "Salt & pepper", qty: "to taste" },
+      { name: "Sourdough rolls", qty: "4" },
+    ],
+    steps: [
+      "Sauté onion in butter and olive oil over medium heat until soft, about 5 minutes. Add garlic and cook 1 minute more.",
+      "Add canned tomatoes and stock. Simmer 10 minutes.",
+      "Add most of the basil. Blend until completely smooth using an immersion blender.",
+      "Stir in cream. Season generously with salt and pepper.",
+      "Ladle into bowls, swirl extra cream, top with remaining basil. Serve with warm sourdough."
+    ],
+    tip: "A pinch of sugar balances the acidity of canned tomatoes and rounds out the flavour beautifully."
+  },
+  {
+    name: "Onigiri", desc: "Japanese rice balls filled with spicy tuna mayo, wrapped in toasted nori.", emoji: "🍙", cats: ["asian","quick","healthy"], time: "10 min", cal: "280 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Cooked Japanese short-grain rice", qty: "400 g" },
+      { name: "Canned tuna, drained", qty: "100 g" },
+      { name: "Kewpie mayonnaise", qty: "2 tbsp" },
+      { name: "Sriracha", qty: "1 tsp" },
+      { name: "Nori sheets, halved", qty: "4 halves" },
+      { name: "Soy sauce", qty: "1 tsp" },
+      { name: "Salt", qty: "for hands" },
+    ],
+    steps: [
+      "Mix tuna with Kewpie mayo, sriracha and soy sauce.",
+      "Wet your hands with water and rub with a little salt.",
+      "Take a handful of warm rice (about 100 g), press a well in the centre and add 1 tablespoon of tuna filling.",
+      "Enclose the filling with rice and shape into a triangle by pressing firmly with cupped hands.",
+      "Wrap the base with a strip of nori. Repeat to make 4 onigiri."
+    ],
+    tip: "Shape onigiri while the rice is still warm — cold rice doesn't compress as well and the balls fall apart."
+  },
+  {
+    name: "Burrito Bowl", desc: "Cilantro lime rice, black beans, grilled chicken, pico de gallo, guacamole and sour cream.", emoji: "🌯", cats: ["western","comfort"], time: "20 min", cal: "560 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Cooked white rice", qty: "300 g" },
+      { name: "Chicken breasts", qty: "2 (300 g)" },
+      { name: "Black beans, drained", qty: "200 g" },
+      { name: "Avocados", qty: "2" },
+      { name: "Tomatoes, diced", qty: "2" },
+      { name: "Red onion, finely diced", qty: "¼" },
+      { name: "Lime", qty: "2" },
+      { name: "Cilantro, chopped", qty: "handful" },
+      { name: "Sour cream", qty: "4 tbsp" },
+      { name: "Cumin & paprika", qty: "1 tsp each" },
+      { name: "Olive oil, salt, pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Season chicken with cumin, paprika, salt and pepper. Grill or pan-fry over medium-high heat 5–6 minutes per side until cooked through. Rest 5 minutes, then slice.",
+      "Stir lime juice and cilantro through the cooked rice.",
+      "Make guacamole: mash avocado with half the lime, salt, and a little red onion.",
+      "Make pico de gallo: mix diced tomatoes with remaining onion, cilantro, lime juice and salt.",
+      "Warm black beans in a small pan with a pinch of cumin.",
+      "Build bowls: rice base, then beans, chicken, guacamole, pico de gallo, and a dollop of sour cream."
+    ],
+    tip: "Marinate the chicken in lime juice, cumin and garlic for 30 minutes before cooking for much deeper flavour."
+  },
+  {
+    name: "Caprese Salad", desc: "Fresh buffalo mozzarella, heirloom tomatoes, basil, extra-virgin olive oil and aged balsamic.", emoji: "🫒", cats: ["healthy","quick","western","vegetarian"], time: "5 min", cal: "290 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Buffalo mozzarella", qty: "200 g" },
+      { name: "Heirloom tomatoes, sliced", qty: "3 large" },
+      { name: "Fresh basil leaves", qty: "large handful" },
+      { name: "Extra-virgin olive oil", qty: "3 tbsp" },
+      { name: "Aged balsamic vinegar", qty: "1 tbsp" },
+      { name: "Flaky sea salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Slice mozzarella and tomatoes to similar thickness.",
+      "Alternate slices of tomato and mozzarella on a platter, overlapping slightly.",
+      "Tuck basil leaves between the slices.",
+      "Drizzle generously with olive oil, then the balsamic.",
+      "Finish with a pinch of flaky salt and cracked black pepper."
+    ],
+    tip: "The quality of olive oil and mozzarella is everything here. Use the best you have — this salad has nowhere to hide."
+  },
+  {
+    name: "Gyoza Plate", desc: "Crispy pan-fried pork and cabbage dumplings with rice and a yuzu ponzu dipping sauce.", emoji: "🥟", cats: ["asian","comfort"], time: "15 min", cal: "400 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Gyoza wrappers", qty: "20" },
+      { name: "Ground pork", qty: "200 g" },
+      { name: "Napa cabbage, finely chopped", qty: "100 g" },
+      { name: "Garlic, minced", qty: "2 cloves" },
+      { name: "Ginger, grated", qty: "1 tsp" },
+      { name: "Soy sauce", qty: "1 tbsp" },
+      { name: "Sesame oil", qty: "1 tbsp" },
+      { name: "Ponzu sauce (for dipping)", qty: "4 tbsp" },
+      { name: "Vegetable oil", qty: "2 tbsp" },
+    ],
+    steps: [
+      "Salt cabbage lightly, rest 5 minutes, then squeeze out all moisture.",
+      "Mix pork with cabbage, garlic, ginger, soy sauce and sesame oil.",
+      "Place 1 teaspoon filling in the centre of each wrapper. Wet edges, fold and crimp to seal.",
+      "Heat oil in a non-stick pan over medium-high. Place gyoza flat-side down, cook until golden, about 2–3 minutes.",
+      "Add 4 tablespoons of water, cover immediately. Steam 3 minutes until water evaporates.",
+      "Uncover and cook 1 more minute for crispy bottoms. Serve with ponzu for dipping."
+    ],
+    tip: "The water-steam method is key — it cooks the filling through while crisping the bottom simultaneously."
+  },
+  {
+    name: "Falafel Wrap", desc: "Crispy baked falafel with hummus, pickled turnip, cucumber and tahini in a pita.", emoji: "🧆", cats: ["healthy","western","vegetarian"], time: "10 min", cal: "430 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Falafel (store-bought or pre-made)", qty: "10 pieces" },
+      { name: "Pita breads", qty: "2" },
+      { name: "Hummus", qty: "4 tbsp" },
+      { name: "Pickled turnip, sliced", qty: "60 g" },
+      { name: "Cucumber, sliced", qty: "½" },
+      { name: "Fresh parsley", qty: "small handful" },
+      { name: "Tahini sauce", qty: "2 tbsp" },
+      { name: "Lemon juice", qty: "1 tbsp" },
+      { name: "Sumac", qty: "pinch" },
+    ],
+    steps: [
+      "Warm falafel in a hot oven at 200°C for 8 minutes until heated through and crispy.",
+      "Warm pitas for 30 seconds in a dry pan or directly over a gas flame.",
+      "Spread 2 tablespoons hummus on each pita.",
+      "Add cucumber, pickled turnip and parsley.",
+      "Nestle 5 falafel into each wrap, drizzle with tahini and lemon juice.",
+      "Dust with sumac and roll up."
+    ],
+    tip: "Pickled turnip (the bright pink Lebanese kind) adds essential acidity. Find it at Middle Eastern grocers or make your own."
+  },
+  {
+    name: "Yakitori Bento", desc: "Grilled chicken skewers with tare sauce over steamed rice, tamagoyaki, pickles and miso soup.", emoji: "🍱", cats: ["asian"], time: "25 min", cal: "510 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken thighs, cubed", qty: "300 g" },
+      { name: "Cooked Japanese rice", qty: "300 g" },
+      { name: "Eggs", qty: "3" },
+      { name: "Soy sauce", qty: "4 tbsp" },
+      { name: "Mirin", qty: "4 tbsp" },
+      { name: "Sake", qty: "2 tbsp" },
+      { name: "Sugar", qty: "2 tsp" },
+      { name: "Dashi powder", qty: "½ tsp" },
+      { name: "Pickled ginger", qty: "2 tbsp" },
+      { name: "Miso soup sachets", qty: "2" },
+    ],
+    steps: [
+      "Make tare: combine soy sauce, mirin, sake and sugar in a small pan. Simmer 5 minutes until slightly thick.",
+      "Thread chicken onto skewers. Grill or pan-fry over high heat 3 minutes per side, brushing with tare sauce repeatedly.",
+      "Make tamagoyaki: beat eggs with dashi, 1 tsp mirin and a pinch of sugar. Cook in a rectangular pan in three thin layers, rolling each layer. Slice.",
+      "Serve chicken skewers alongside rice, tamagoyaki, pickled ginger. Prepare miso soup per sachet instructions."
+    ],
+    tip: "The secret to glossy, caramelised yakitori is multiple thin coats of tare — brush, grill, brush again, at least 3 times."
+  },
+  {
+    name: "Mushroom Risotto", desc: "Arborio rice slowly cooked with porcini, white wine, parmesan and a knob of cold butter.", emoji: "🍄", cats: ["comfort","western","vegetarian"], time: "35 min", cal: "520 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Arborio rice", qty: "300 g" },
+      { name: "Mixed mushrooms, sliced", qty: "300 g" },
+      { name: "Dried porcini (rehydrated)", qty: "20 g" },
+      { name: "Vegetable stock, warm", qty: "1 litre" },
+      { name: "Dry white wine", qty: "150 ml" },
+      { name: "Shallots, finely chopped", qty: "2" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Butter, cold", qty: "3 tbsp" },
+      { name: "Parmesan, finely grated", qty: "80 g" },
+      { name: "Olive oil", qty: "2 tbsp" },
+      { name: "Fresh thyme", qty: "3 sprigs" },
+    ],
+    steps: [
+      "Soak porcini in 200 ml hot water 15 minutes. Drain, reserving liquid. Add liquid to warm stock.",
+      "Sauté fresh mushrooms in 1 tbsp butter and olive oil over high heat until golden. Season. Set aside.",
+      "In the same pan, soften shallots and garlic in remaining olive oil over medium heat.",
+      "Add rice, stir to coat, cook 1 minute until edges look translucent.",
+      "Pour in wine and stir until absorbed.",
+      "Add warm stock one ladleful at a time, stirring frequently, letting each addition absorb before adding the next — about 18 minutes total.",
+      "Stir in porcini, sautéed mushrooms, cold butter and parmesan. Rest lid on for 2 minutes, then serve."
+    ],
+    tip: "The final 'mantecatura' — stirring in cold butter off the heat — creates the signature creamy, glossy finish."
+  },
+  {
+    name: "Banh Mi", desc: "Crispy baguette loaded with char siu pork, pâté, pickled daikon, jalapeño and cilantro.", emoji: "🥖", cats: ["asian","quick"], time: "10 min", cal: "440 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Vietnamese baguettes (or petit baguettes)", qty: "2" },
+      { name: "Char siu pork or BBQ pork, sliced", qty: "200 g" },
+      { name: "Smooth chicken pâté", qty: "2 tbsp" },
+      { name: "Pickled daikon & carrot", qty: "80 g" },
+      { name: "Cucumber, thinly sliced", qty: "½" },
+      { name: "Jalapeños, sliced", qty: "1" },
+      { name: "Fresh cilantro", qty: "large handful" },
+      { name: "Mayonnaise", qty: "2 tbsp" },
+      { name: "Soy sauce", qty: "1 tsp" },
+    ],
+    steps: [
+      "Make quick pickles if not using store-bought: toss julienned daikon and carrot with rice vinegar, sugar and salt. Rest 10 minutes.",
+      "Split baguettes lengthwise, leaving a hinge. Lightly toast in a hot oven 3 minutes.",
+      "Spread pâté on one cut side and mayo on the other.",
+      "Layer pork, cucumber, picked vegetables, jalapeños and cilantro inside.",
+      "Drizzle with a little soy sauce, close and press lightly."
+    ],
+    tip: "The airy, thin-crusted Vietnamese baguette is key. A regular French baguette is too chewy — opt for a smaller, softer roll if unavailable."
+  },
+  {
+    name: "Shakshuka", desc: "Eggs poached in a spiced tomato and pepper sauce, finished with feta and fresh herbs. A Middle Eastern classic.", emoji: "🍳", cats: ["healthy","vegetarian","western"], time: "20 min", cal: "340 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Eggs", qty: "4" },
+      { name: "Canned crushed tomatoes", qty: "400 g" },
+      { name: "Red bell pepper, diced", qty: "1" },
+      { name: "Onion, diced", qty: "1" },
+      { name: "Garlic cloves, minced", qty: "3" },
+      { name: "Cumin", qty: "1 tsp" },
+      { name: "Paprika (smoked)", qty: "1 tsp" },
+      { name: "Chilli flakes", qty: "½ tsp" },
+      { name: "Feta cheese, crumbled", qty: "60 g" },
+      { name: "Fresh parsley or cilantro", qty: "handful" },
+      { name: "Olive oil", qty: "2 tbsp" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Heat olive oil in a wide skillet over medium heat. Sauté onion until soft, about 5 minutes. Add peppers and cook 3 minutes more.",
+      "Add garlic, cumin, paprika and chilli flakes. Cook 1 minute until fragrant.",
+      "Pour in tomatoes. Season well and simmer 8 minutes until the sauce thickens.",
+      "Make 4 wells in the sauce. Crack an egg into each well.",
+      "Cover and cook 5–7 minutes until whites are set but yolks remain runny.",
+      "Scatter feta and fresh herbs over the top. Serve straight from the pan with crusty bread."
+    ],
+    tip: "Don't overcook the eggs — the residual heat from the sauce will continue cooking them after you take the pan off the heat."
+  },
+  {
+    name: "Chicken Tikka Masala", desc: "Tender charred chicken in a creamy, spiced tomato sauce served with fluffy basmati rice.", emoji: "🍛", cats: ["asian","comfort"], time: "35 min", cal: "610 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Chicken thighs, cut into chunks", qty: "700 g" },
+      { name: "Plain yoghurt", qty: "150 g" },
+      { name: "Tikka masala paste", qty: "4 tbsp" },
+      { name: "Canned chopped tomatoes", qty: "400 g" },
+      { name: "Heavy cream", qty: "150 ml" },
+      { name: "Onion, finely chopped", qty: "1 large" },
+      { name: "Garlic cloves, minced", qty: "4" },
+      { name: "Fresh ginger, grated", qty: "2 tsp" },
+      { name: "Butter", qty: "2 tbsp" },
+      { name: "Basmati rice", qty: "300 g" },
+      { name: "Fresh cilantro", qty: "handful" },
+      { name: "Salt", qty: "to taste" },
+    ],
+    steps: [
+      "Marinate chicken in yoghurt and 2 tbsp tikka paste for at least 20 minutes (or overnight).",
+      "Cook basmati rice per package directions. Keep warm.",
+      "Grill or pan-fry chicken over high heat until charred in spots, 8–10 minutes. Set aside.",
+      "In a large pan, melt butter. Sauté onion until golden, about 8 minutes. Add garlic and ginger, cook 2 minutes.",
+      "Stir in remaining tikka paste, then add tomatoes. Simmer 10 minutes.",
+      "Add cream and the cooked chicken. Simmer gently 5 minutes. Adjust seasoning.",
+      "Serve over rice, topped with fresh cilantro."
+    ],
+    tip: "Charring the chicken before adding it to the sauce is non-negotiable — it adds the smoky depth that defines this dish."
+  },
+  {
+    name: "Tacos al Pastor", desc: "Marinated pork tacos with pineapple, onion, cilantro and a squeeze of lime in warm corn tortillas.", emoji: "🌮", cats: ["western","comfort"], time: "30 min", cal: "530 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Pork shoulder, thinly sliced", qty: "600 g" },
+      { name: "Corn tortillas (small)", qty: "12" },
+      { name: "Pineapple, diced", qty: "200 g" },
+      { name: "White onion, finely diced", qty: "1" },
+      { name: "Fresh cilantro, chopped", qty: "large bunch" },
+      { name: "Limes", qty: "3" },
+      { name: "Chipotle in adobo", qty: "2 tbsp" },
+      { name: "Ancho chilli powder", qty: "1 tbsp" },
+      { name: "Cumin", qty: "1 tsp" },
+      { name: "Garlic cloves", qty: "3" },
+      { name: "White wine vinegar", qty: "2 tbsp" },
+      { name: "Orange juice", qty: "60 ml" },
+      { name: "Salt & oil", qty: "to taste" },
+    ],
+    steps: [
+      "Blend chipotle, chilli powder, cumin, garlic, vinegar, orange juice and a pinch of salt into a marinade.",
+      "Coat pork slices in marinade. Rest at least 15 minutes.",
+      "Cook pork in a very hot oiled skillet or griddle, 2–3 minutes per side until caramelised. Rest briefly, then chop.",
+      "In the same pan, quickly char the pineapple pieces, 1–2 minutes.",
+      "Warm tortillas directly over a gas flame or dry pan.",
+      "Assemble tacos: pork, charred pineapple, onion, cilantro. Squeeze lime generously over everything."
+    ],
+    tip: "Slicing the pork as thin as possible — almost shaved — dramatically cuts cook time and maximises the caramelised crust."
+  },
+  {
+    name: "Spicy Korean Tofu Stew (Sundubu Jjigae)", desc: "Silken tofu in a fiery, umami-rich broth with mushrooms and egg. Warming and deeply satisfying.", emoji: "🥘", cats: ["asian","comfort","vegetarian"], time: "20 min", cal: "310 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Silken tofu (soft)", qty: "400 g" },
+      { name: "Gochugaru (Korean chilli flakes)", qty: "2 tbsp" },
+      { name: "Mushrooms (shiitake or enoki)", qty: "100 g" },
+      { name: "Garlic cloves, minced", qty: "3" },
+      { name: "Sesame oil", qty: "1 tbsp" },
+      { name: "Vegetable or anchovy stock", qty: "400 ml" },
+      { name: "Soy sauce", qty: "1 tbsp" },
+      { name: "Eggs", qty: "2" },
+      { name: "Green onions, sliced", qty: "2 stalks" },
+      { name: "Cooked rice (to serve)", qty: "2 bowls" },
+    ],
+    steps: [
+      "Heat sesame oil in a small earthenware pot or saucepan. Add garlic and gochugaru, stir-fry 1 minute.",
+      "Pour in stock and bring to a boil. Add soy sauce and mushrooms.",
+      "Gently spoon in tofu in large chunks. Simmer 3 minutes.",
+      "Crack eggs directly into the simmering stew. Cook 2–3 minutes until whites just set.",
+      "Scatter green onions over the top. Serve immediately in the pot with steamed rice alongside."
+    ],
+    tip: "Serve the stew still bubbling — the egg continues to cook at the table, exactly like in Korean restaurants."
+  },
+  {
+    name: "Spaghetti Carbonara", desc: "Silky pasta coated in a rich egg and pecorino sauce with crispy guanciale. No cream, ever.", emoji: "🍝", cats: ["comfort","western"], time: "20 min", cal: "620 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Spaghetti", qty: "200 g" },
+      { name: "Guanciale or pancetta, diced", qty: "120 g" },
+      { name: "Egg yolks", qty: "3" },
+      { name: "Whole egg", qty: "1" },
+      { name: "Pecorino Romano, finely grated", qty: "80 g" },
+      { name: "Parmesan, finely grated", qty: "30 g" },
+      { name: "Freshly ground black pepper", qty: "generous amount" },
+      { name: "Salt (for pasta water)", qty: "to taste" },
+    ],
+    steps: [
+      "Bring a large pot of generously salted water to a boil. Cook spaghetti until al dente.",
+      "Meanwhile, cook guanciale in a dry pan over medium heat until the fat renders and the edges crisp. Remove from heat.",
+      "Whisk yolks, whole egg, most of the pecorino and a generous amount of black pepper in a bowl.",
+      "Reserve 1 cup pasta cooking water before draining.",
+      "Add drained pasta to the pan with guanciale (off heat). Add egg mixture and a splash of pasta water. Toss vigorously — the residual heat should emulsify the sauce without scrambling the eggs.",
+      "Add more pasta water as needed for a creamy, silky consistency. Serve topped with remaining pecorino and pepper."
+    ],
+    tip: "The pan must be off the heat when you add the egg mixture. High heat = scrambled eggs. Patience and tossing = carbonara."
+  },
+  {
+    name: "Miso Ramen", desc: "Earthy miso broth with ramen noodles, corn, butter, bamboo shoots and a soft-boiled egg.", emoji: "🍜", cats: ["asian","comfort","vegetarian"], time: "25 min", cal: "520 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Ramen noodles", qty: "200 g" },
+      { name: "White or red miso paste", qty: "3 tbsp" },
+      { name: "Vegetable stock", qty: "800 ml" },
+      { name: "Corn kernels (canned)", qty: "80 g" },
+      { name: "Bamboo shoots", qty: "60 g" },
+      { name: "Butter", qty: "1 tbsp" },
+      { name: "Eggs", qty: "2" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Sesame oil", qty: "1 tsp" },
+      { name: "Green onions", qty: "2 stalks" },
+      { name: "Bean sprouts", qty: "50 g" },
+    ],
+    steps: [
+      "Soft-boil eggs 7 minutes, cool in ice water, peel and halve.",
+      "Sauté garlic in a splash of oil. Add stock and bring to a simmer.",
+      "Whisk in miso paste until fully dissolved. Do not boil after this point.",
+      "Cook noodles separately, drain and divide between bowls.",
+      "Ladle broth over noodles. Top with corn, bamboo shoots, bean sprouts and egg halves.",
+      "Add a pat of butter to each bowl and a drizzle of sesame oil. Garnish with green onions."
+    ],
+    tip: "Never boil the broth after adding miso — boiling kills the beneficial probiotics and turns the flavour harsh and salty."
+  },
+  {
+    name: "Margherita Pizza", desc: "Thin Roman-style pizza with San Marzano tomato sauce, fresh mozzarella and basil.", emoji: "🍕", cats: ["comfort","western","vegetarian"], time: "30 min", cal: "560 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Pizza dough ball (store-bought)", qty: "300 g" },
+      { name: "San Marzano canned tomatoes", qty: "200 g" },
+      { name: "Fresh mozzarella (fior di latte)", qty: "150 g" },
+      { name: "Fresh basil leaves", qty: "large handful" },
+      { name: "Extra-virgin olive oil", qty: "2 tbsp" },
+      { name: "Garlic clove", qty: "1" },
+      { name: "Salt", qty: "to taste" },
+    ],
+    steps: [
+      "Place a baking stone or upside-down tray in your oven and preheat to maximum (250°C / 480°F) for at least 30 minutes.",
+      "Crush tomatoes by hand. Season with salt and a drizzle of oil. No cooking needed.",
+      "Stretch dough by hand on a floured surface into a thin round. Transfer to parchment paper.",
+      "Rub the crust edge with the cut garlic clove. Spoon a thin layer of tomato sauce over the base.",
+      "Tear mozzarella and scatter over the sauce. Drizzle with olive oil.",
+      "Slide the pizza (on the parchment) onto the hot stone. Bake 7–10 minutes until charred and bubbling.",
+      "Remove from oven, scatter fresh basil immediately and serve."
+    ],
+    tip: "Less sauce, not more — a wet pizza won't get a crispy base. The mozzarella provides all the moisture it needs."
+  },
+  {
+    name: "Vietnamese Pho", desc: "Fragrant star anise and ginger beef broth with rice noodles, thinly sliced beef and fresh herbs.", emoji: "🍲", cats: ["asian","healthy"], time: "30 min", cal: "480 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Flat rice noodles (banh pho)", qty: "200 g" },
+      { name: "Beef sirloin, very thinly sliced", qty: "200 g" },
+      { name: "Beef stock (good quality)", qty: "1 litre" },
+      { name: "Star anise", qty: "3" },
+      { name: "Cinnamon stick", qty: "1" },
+      { name: "Fresh ginger, sliced", qty: "30 g" },
+      { name: "Fish sauce", qty: "2 tbsp" },
+      { name: "Bean sprouts", qty: "100 g" },
+      { name: "Fresh basil and mint", qty: "large handful" },
+      { name: "Limes", qty: "2" },
+      { name: "Hoisin and sriracha (to serve)", qty: "as needed" },
+    ],
+    steps: [
+      "Toast star anise and cinnamon in a dry pan 1 minute. Char ginger slices directly over a flame or under the grill.",
+      "Add stock, toasted spices and charred ginger to a pot. Simmer 20 minutes. Strain.",
+      "Season broth with fish sauce. Keep at a near-boil.",
+      "Cook rice noodles per package instructions. Drain and divide between bowls.",
+      "Arrange raw beef slices over the hot noodles — the hot broth will cook them.",
+      "Ladle boiling broth directly over the beef and noodles.",
+      "Serve immediately with bean sprouts, fresh herbs, lime wedges, hoisin and sriracha on the side."
+    ],
+    tip: "Freeze the sirloin for 20 minutes before slicing — it firms up the meat and makes paper-thin cuts much easier."
+  },
+  {
+    name: "Chicken Caesar Wrap", desc: "Grilled chicken, cos lettuce, parmesan and house Caesar dressing in a toasted flour tortilla.", emoji: "🌯", cats: ["quick","western","healthy"], time: "12 min", cal: "430 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken breast fillets", qty: "2" },
+      { name: "Large flour tortillas", qty: "2" },
+      { name: "Cos (romaine) lettuce", qty: "4 large leaves" },
+      { name: "Parmesan, shaved", qty: "30 g" },
+      { name: "Mayonnaise", qty: "3 tbsp" },
+      { name: "Anchovy paste", qty: "1 tsp" },
+      { name: "Garlic clove, minced", qty: "1" },
+      { name: "Lemon juice", qty: "1 tbsp" },
+      { name: "Worcestershire sauce", qty: "½ tsp" },
+      { name: "Salt & pepper", qty: "to taste" },
+      { name: "Oil", qty: "1 tbsp" },
+    ],
+    steps: [
+      "Mix mayo, anchovy paste, garlic, lemon juice and Worcestershire sauce into a Caesar dressing. Season.",
+      "Season chicken breasts and pan-fry in oil over medium-high heat, 5–6 minutes per side. Rest 3 minutes, then slice.",
+      "Warm tortillas in a dry pan or microwave.",
+      "Lay lettuce leaves across each tortilla. Top with sliced chicken and parmesan shavings.",
+      "Drizzle Caesar dressing over the filling.",
+      "Roll tightly, tucking in the sides. Cut on the diagonal and serve."
+    ],
+    tip: "Toast the wrap seam-side down in a dry pan for 1 minute before serving — it holds together perfectly and adds a satisfying crunch."
+  },
+  {
+    name: "Dal Tadka", desc: "Golden lentils simmered with turmeric and finished with a sizzling ghee and cumin tarka. Served with rice.", emoji: "🫕", cats: ["asian","healthy","vegetarian"], time: "30 min", cal: "390 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Red lentils, rinsed", qty: "250 g" },
+      { name: "Water", qty: "800 ml" },
+      { name: "Turmeric", qty: "1 tsp" },
+      { name: "Onion, finely diced", qty: "1" },
+      { name: "Tomatoes, diced", qty: "2" },
+      { name: "Garlic cloves, minced", qty: "4" },
+      { name: "Fresh ginger, grated", qty: "1 tsp" },
+      { name: "Cumin seeds", qty: "1 tsp" },
+      { name: "Dried red chillies", qty: "2" },
+      { name: "Ghee or butter", qty: "2 tbsp" },
+      { name: "Fresh cilantro", qty: "handful" },
+      { name: "Salt", qty: "to taste" },
+      { name: "Basmati rice (to serve)", qty: "300 g" },
+    ],
+    steps: [
+      "Cook lentils with water and turmeric over medium heat until completely soft, about 20 minutes. Mash slightly.",
+      "In a separate pan, heat 1 tbsp ghee. Sauté onion until golden. Add garlic, ginger and tomatoes. Cook 5 minutes until a thick masala forms.",
+      "Stir the masala into the lentils. Season with salt. Simmer together 5 minutes.",
+      "For the tarka: heat remaining ghee in a small pan until hot. Add cumin seeds and dried chillies. They'll sizzle and pop — 30 seconds.",
+      "Pour the sizzling tarka directly over the dal. Scatter cilantro on top.",
+      "Serve immediately with basmati rice."
+    ],
+    tip: "The tarka must go on at the last moment — pouring sizzling spiced ghee over the dal just before serving is what gives it its signature smoky, aromatic punch."
+  },
+  {
+    name: "Smash Burgers", desc: "Double smashed beef patties with American cheese, pickles, onion and special sauce in a toasted brioche bun.", emoji: "🍔", cats: ["comfort","western","quick"], time: "15 min", cal: "710 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "80/20 minced beef", qty: "400 g" },
+      { name: "Brioche burger buns", qty: "2" },
+      { name: "American cheese slices", qty: "4" },
+      { name: "White onion, thinly sliced", qty: "½" },
+      { name: "Pickles, sliced", qty: "8 slices" },
+      { name: "Mayonnaise", qty: "3 tbsp" },
+      { name: "Ketchup", qty: "1 tbsp" },
+      { name: "American mustard", qty: "1 tsp" },
+      { name: "Pickle juice", qty: "1 tsp" },
+      { name: "Salt & black pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Mix mayo, ketchup, mustard and pickle juice for the special sauce. Refrigerate.",
+      "Divide beef into 4 loose balls (100g each). Do not compact them.",
+      "Heat a cast-iron skillet or griddle over the highest possible heat until smoking.",
+      "Place a beef ball on the hot surface. Immediately smash it flat with a spatula — hold for 10 seconds. Season with salt and pepper. Repeat.",
+      "Cook 2 minutes without touching — a dark, crispy crust should form. Flip. Add cheese immediately. Cook 1 more minute.",
+      "Toast buns in the same pan for 30 seconds.",
+      "Build: sauce on both buns, double patty stack, pickles, raw onion. Serve immediately."
+    ],
+    tip: "Cast iron and maximum heat are non-negotiable. The crust only forms when there is no steam — use a pan big enough that burgers don't crowd each other."
+  },
+  {
+    name: "Spring Rolls", desc: "Crispy fried rolls packed with glass noodles, cabbage, carrot, and shiitake mushrooms.", emoji: "🥢", cats: ["asian","quick"], time: "25 min", cal: "370 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Spring roll wrappers (large)", qty: "12" },
+      { name: "Glass noodles (vermicelli)", qty: "80 g" },
+      { name: "Cabbage, finely shredded", qty: "200 g" },
+      { name: "Carrot, julienned", qty: "1 large" },
+      { name: "Shiitake mushrooms, sliced", qty: "80 g" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Soy sauce", qty: "2 tbsp" },
+      { name: "Sesame oil", qty: "1 tsp" },
+      { name: "Oil for frying", qty: "as needed" },
+      { name: "Flour paste (flour + water)", qty: "2 tbsp" },
+    ],
+    steps: [
+      "Soak glass noodles in hot water 5 minutes. Drain and roughly chop.",
+      "Stir-fry garlic, cabbage, carrot and mushrooms over high heat 3 minutes. Season with soy sauce and sesame oil.",
+      "Add noodles, toss and let cool completely. (Warm filling = soggy rolls.)",
+      "Place 2 tbsp filling near the bottom of a wrapper. Fold up the bottom, tuck in sides and roll tightly. Seal edge with flour paste.",
+      "Heat 3cm of oil in a deep pan to 175°C. Fry rolls in batches 3–4 minutes until golden.",
+      "Drain on paper towels. Serve with sweet chilli sauce."
+    ],
+    tip: "The filling must be completely cool before rolling — hot filling creates steam inside the wrapper and makes it go soggy and burst when frying."
+  },
+  {
+    name: "Niçoise Salad", desc: "A classic French composed salad with seared tuna, green beans, olives, hard-boiled egg and anchovy vinaigrette.", emoji: "🥗", cats: ["healthy","western"], time: "20 min", cal: "420 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Tuna steaks (or good canned tuna)", qty: "2 × 150 g" },
+      { name: "Green beans, trimmed", qty: "150 g" },
+      { name: "Eggs", qty: "2" },
+      { name: "Cherry tomatoes, halved", qty: "150 g" },
+      { name: "Black olives (Niçoise)", qty: "60 g" },
+      { name: "Little gem lettuce", qty: "2 heads" },
+      { name: "Anchovy fillets", qty: "4" },
+      { name: "Dijon mustard", qty: "1 tsp" },
+      { name: "Red wine vinegar", qty: "1 tbsp" },
+      { name: "Olive oil", qty: "4 tbsp" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Hard-boil eggs 9 minutes, cool, peel and halve. Blanch green beans in salted water 3 minutes. Refresh in ice water.",
+      "Whisk mustard, vinegar, olive oil and a minced anchovy for the dressing. Season.",
+      "Season tuna steaks. Sear in a hot oiled pan 1½ minutes per side (leave centre rare).",
+      "Arrange lettuce leaves on plates. Lay green beans, tomatoes, olives and egg halves around.",
+      "Flake tuna over the salad. Drape remaining anchovy fillets on top.",
+      "Drizzle dressing generously over everything and serve immediately."
+    ],
+    tip: "A true Niçoise is composed, not tossed — arrange each element separately so every bite contains a different combination."
+  },
+  {
+    name: "Lamb Kofta Wraps", desc: "Spiced lamb kofta grilled on skewers, wrapped in flatbread with tzatziki and pickled onions.", emoji: "🫔", cats: ["western","comfort"], time: "25 min", cal: "570 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Minced lamb", qty: "500 g" },
+      { name: "Flatbreads (large)", qty: "4" },
+      { name: "Onion, grated", qty: "½" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Cumin", qty: "1 tsp" },
+      { name: "Coriander (ground)", qty: "1 tsp" },
+      { name: "Cinnamon", qty: "¼ tsp" },
+      { name: "Fresh parsley, chopped", qty: "handful" },
+      { name: "Greek yoghurt", qty: "150 g" },
+      { name: "Cucumber, grated", qty: "½" },
+      { name: "Red onion, thinly sliced", qty: "1" },
+      { name: "Red wine vinegar", qty: "1 tbsp" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Quick-pickle red onion: toss with vinegar and a pinch of salt. Set aside 15 minutes.",
+      "Mix lamb with grated onion, garlic, cumin, coriander, cinnamon and parsley. Season well.",
+      "Shape into 8 sausages around flat metal skewers (or shape into patties without skewers).",
+      "Make tzatziki: squeeze excess moisture from grated cucumber, mix with yoghurt and a pinch of salt.",
+      "Grill or pan-fry kofta over medium-high heat 3–4 minutes per side until cooked through and charred.",
+      "Warm flatbreads. Spread tzatziki, add 2 kofta, pickled onions and fresh herbs. Wrap and serve."
+    ],
+    tip: "Grating the onion (rather than chopping) releases more moisture, which keeps the kofta tender and helps it bind without egg."
+  },
+  {
+    name: "Fried Rice", desc: "Wok-tossed day-old rice with egg, vegetables, soy sauce and sesame oil. The ultimate leftover meal.", emoji: "🍚", cats: ["asian","quick","comfort"], time: "10 min", cal: "440 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Cooked rice (day-old)", qty: "400 g" },
+      { name: "Eggs", qty: "2" },
+      { name: "Frozen peas and corn", qty: "100 g" },
+      { name: "Carrot, finely diced", qty: "1" },
+      { name: "Spring onions, sliced", qty: "3 stalks" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Soy sauce", qty: "2 tbsp" },
+      { name: "Oyster sauce", qty: "1 tbsp" },
+      { name: "Sesame oil", qty: "1 tsp" },
+      { name: "Neutral oil", qty: "2 tbsp" },
+      { name: "White pepper", qty: "pinch" },
+    ],
+    steps: [
+      "Heat oil in a wok or large skillet over the highest possible heat until smoking.",
+      "Add garlic and carrot. Stir-fry 1 minute.",
+      "Push everything to the side. Crack eggs into the centre and scramble quickly.",
+      "Add frozen peas and corn. Stir everything together.",
+      "Add rice, breaking up any clumps. Spread in the pan and let it sit untouched 30 seconds for colour, then toss.",
+      "Add soy sauce, oyster sauce and white pepper. Toss to coat everything.",
+      "Remove from heat. Drizzle sesame oil and scatter spring onions. Serve immediately."
+    ],
+    tip: "Day-old cold rice is the secret ingredient — fresh rice has too much moisture and steams rather than frying. Spread leftover rice on a tray to dry out faster."
+  },
+  {
+    name: "Mushroom & Brie Toastie", desc: "Buttery sourdough packed with sautéed wild mushrooms, melted brie and fresh thyme. Pure comfort.", emoji: "🍞", cats: ["comfort","western","vegetarian","quick"], time: "12 min", cal: "480 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Thick sourdough slices", qty: "4" },
+      { name: "Brie or camembert, sliced", qty: "120 g" },
+      { name: "Mixed mushrooms (chestnut, shiitake)", qty: "200 g" },
+      { name: "Butter", qty: "3 tbsp" },
+      { name: "Garlic clove, minced", qty: "1" },
+      { name: "Fresh thyme leaves", qty: "1 tsp" },
+      { name: "Wholegrain mustard", qty: "1 tsp" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Slice mushrooms. Heat 1 tbsp butter in a pan over high heat. Sauté mushrooms without stirring until golden, about 3 minutes. Add garlic and thyme. Season.",
+      "Spread one side of each bread slice with butter and the other side with mustard.",
+      "Build sandwiches: mustard side inward, layer mushrooms and brie. Press together.",
+      "Heat a pan over medium heat. Cook toasties butter-side down 2–3 minutes until deep golden.",
+      "Carefully flip and press down with a spatula. Cook another 2 minutes until brie is melted and bread is crisp.",
+      "Rest 1 minute before cutting — the brie needs a moment to settle."
+    ],
+    tip: "High heat for mushrooms, medium for the toastie — searing the mushrooms first gives colour and prevents a soggy sandwich."
+  },
+  {
+    name: "Chicken Souvlaki Plate", desc: "Lemon-herb marinated chicken skewers with tzatziki, warm pita, tomato, olives and chips.", emoji: "🍖", cats: ["western","healthy"], time: "25 min", cal: "550 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken thighs, cubed", qty: "400 g" },
+      { name: "Lemon juice", qty: "3 tbsp" },
+      { name: "Olive oil", qty: "4 tbsp" },
+      { name: "Garlic cloves, minced", qty: "3" },
+      { name: "Dried oregano", qty: "2 tsp" },
+      { name: "Greek pita breads", qty: "2" },
+      { name: "Greek yoghurt", qty: "100 g" },
+      { name: "Cucumber, grated", qty: "½" },
+      { name: "Cherry tomatoes", qty: "150 g" },
+      { name: "Kalamata olives", qty: "40 g" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Marinate chicken in lemon juice, olive oil, garlic and oregano for at least 15 minutes.",
+      "Make tzatziki: squeeze water from grated cucumber, mix with yoghurt, 1 minced garlic and a pinch of salt.",
+      "Thread chicken onto metal skewers.",
+      "Grill or pan-fry over high heat 4–5 minutes per side until cooked through with charred edges.",
+      "Warm pita breads in the oven or dry pan.",
+      "Plate with tzatziki, halved cherry tomatoes, olives and pita. Squeeze fresh lemon over the chicken."
+    ],
+    tip: "Thigh meat stays juicier than breast on a skewer — it forgives a little extra cooking time without drying out."
+  },
+  {
+    name: "Tom Yum Noodle Soup", desc: "Hot and sour Thai broth with shrimp, mushrooms, lemongrass and rice noodles.", emoji: "🍤", cats: ["asian","healthy","quick"], time: "20 min", cal: "320 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Shrimp, peeled", qty: "200 g" },
+      { name: "Rice vermicelli noodles", qty: "150 g" },
+      { name: "Chicken or prawn stock", qty: "800 ml" },
+      { name: "Lemongrass stalks, bashed", qty: "2" },
+      { name: "Galangal or ginger, sliced", qty: "20 g" },
+      { name: "Kaffir lime leaves", qty: "4" },
+      { name: "Mushrooms (oyster or straw)", qty: "100 g" },
+      { name: "Fish sauce", qty: "2 tbsp" },
+      { name: "Lime juice", qty: "2 tbsp" },
+      { name: "Nam prik pao (chilli paste)", qty: "1 tbsp" },
+      { name: "Cherry tomatoes", qty: "80 g" },
+      { name: "Fresh cilantro and chilli", qty: "to garnish" },
+    ],
+    steps: [
+      "Soak rice noodles in hot water 5 minutes. Drain and set aside.",
+      "Bring stock to a boil with lemongrass, galangal and lime leaves. Simmer 5 minutes to infuse.",
+      "Stir in chilli paste. Add mushrooms and tomatoes, cook 2 minutes.",
+      "Add shrimp, cook 2 minutes until pink.",
+      "Season with fish sauce and lime juice — it should be hot, sour, salty and fragrant.",
+      "Divide noodles between bowls. Ladle soup over top. Garnish with cilantro and fresh chilli."
+    ],
+    tip: "Add the lime juice off the heat — cooking lime makes it bitter. Squeeze it in at the very end for the brightest, freshest sourness."
+  },
+  {
+    name: "Huevos Rancheros", desc: "Fried eggs on warm corn tortillas, smothered in a smoky ranchero salsa with black beans and avocado.", emoji: "🥚", cats: ["western","vegetarian","quick"], time: "15 min", cal: "460 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Eggs", qty: "4" },
+      { name: "Corn tortillas (small)", qty: "4" },
+      { name: "Canned black beans, drained", qty: "200 g" },
+      { name: "Canned chopped tomatoes", qty: "200 g" },
+      { name: "Jalapeño, diced", qty: "1" },
+      { name: "Garlic clove, minced", qty: "1" },
+      { name: "Cumin", qty: "½ tsp" },
+      { name: "Smoked paprika", qty: "½ tsp" },
+      { name: "Avocado", qty: "1" },
+      { name: "Lime", qty: "1" },
+      { name: "Fresh cilantro", qty: "handful" },
+      { name: "Oil and salt", qty: "to taste" },
+    ],
+    steps: [
+      "Make ranchero sauce: sauté garlic and jalapeño in oil 1 minute. Add tomatoes, cumin and smoked paprika. Simmer 8 minutes. Season.",
+      "Warm black beans in the tomato sauce for 2 minutes.",
+      "Warm tortillas in a dry pan or directly over a gas flame.",
+      "Fry eggs in oil to your liking — sunny-side up works best here.",
+      "Slice avocado and season with salt and lime.",
+      "Assemble: two tortillas per plate, spoon beans and sauce, lay egg on top, add avocado slices. Scatter cilantro and squeeze lime."
+    ],
+    tip: "Warm the tortillas directly over a gas burner for 10 seconds per side — the slight char adds an authentic smokiness you can't get from the microwave."
+  },
+  {
+    name: "Lemon Herb Salmon", desc: "Pan-seared salmon with a crispy skin, lemon butter sauce, capers and fresh dill. Ready in 15 minutes.", emoji: "🐟", cats: ["healthy","western","quick"], time: "15 min", cal: "490 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Salmon fillets (skin-on)", qty: "2 × 180 g" },
+      { name: "Butter", qty: "2 tbsp" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Lemon", qty: "1" },
+      { name: "Capers", qty: "1 tbsp" },
+      { name: "Fresh dill", qty: "handful" },
+      { name: "Olive oil", qty: "1 tbsp" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Pat salmon dry with paper towels. Season generously on both sides.",
+      "Heat olive oil in a skillet over medium-high heat until shimmering. Add salmon skin-side down.",
+      "Press gently with a spatula for 10 seconds. Cook without moving 4–5 minutes until skin is very crispy.",
+      "Flip and cook 1–2 minutes more. Remove salmon and rest.",
+      "In the same pan, lower heat to medium. Add butter and garlic, cook 1 minute.",
+      "Add capers and a squeeze of lemon. Swirl to make a pan sauce.",
+      "Pour sauce over salmon. Scatter fresh dill and serve with steamed greens or rice."
+    ],
+    tip: "Starting the salmon skin-side down in a cold-ish pan (not ripping hot) and letting it come up to heat gives a uniformly crispy skin without the flesh overcooking."
+  },
+  // ── New meals ──
+  {
+    name: "Dan Dan Noodles", desc: "Silky wheat noodles in a numbing, spicy sesame sauce with pork mince, chilli oil and preserved vegetables.", emoji: "🍜", cats: ["asian","chinese","comfort"], time: "20 min", cal: "540 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Wheat noodles (thin)", qty: "200 g" },
+      { name: "Minced pork", qty: "150 g" },
+      { name: "Tahini or Chinese sesame paste", qty: "3 tbsp" },
+      { name: "Soy sauce", qty: "2 tbsp" },
+      { name: "Chilli oil", qty: "2 tbsp" },
+      { name: "Sichuan peppercorns, toasted & ground", qty: "½ tsp" },
+      { name: "Ya cai (Yibin preserved vegetables) or chopped pickles", qty: "2 tbsp" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Rice vinegar", qty: "1 tbsp" },
+      { name: "Green onions, sliced", qty: "2 stalks" },
+    ],
+    steps: [
+      "Whisk together sesame paste, soy sauce, chilli oil, Sichuan pepper, vinegar and 3 tbsp warm water into a smooth sauce.",
+      "Cook noodles in boiling salted water until al dente. Reserve ¼ cup cooking water, drain.",
+      "Brown pork mince in a dry pan over high heat, breaking into crumbs. Season with a splash of soy sauce. Add preserved vegetables and toss.",
+      "Toss hot noodles with the sauce, adding pasta water to loosen.",
+      "Divide between bowls. Top with pork, green onions and an extra drizzle of chilli oil."
+    ],
+    tip: "The Sichuan pepper is what makes this dish — it creates a tingling numbness (má) that balances the heat. Don't skip it or substitute with regular pepper."
+  },
+  {
+    name: "Katsu Don", desc: "Crispy panko-breaded pork cutlet simmered in a dashi-mirin broth with egg, served over steamed rice.", emoji: "🍚", cats: ["asian","japanese","comfort"], time: "25 min", cal: "650 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Pork loin cutlets", qty: "2 × 150 g" },
+      { name: "Panko breadcrumbs", qty: "80 g" },
+      { name: "Flour", qty: "3 tbsp" },
+      { name: "Eggs", qty: "3" },
+      { name: "Dashi stock", qty: "150 ml" },
+      { name: "Mirin", qty: "2 tbsp" },
+      { name: "Soy sauce", qty: "2 tbsp" },
+      { name: "Sugar", qty: "1 tsp" },
+      { name: "Onion, thinly sliced", qty: "½" },
+      { name: "Steamed Japanese rice", qty: "2 bowls" },
+      { name: "Oil for frying", qty: "as needed" },
+    ],
+    steps: [
+      "Pound pork cutlets to 1cm thick. Season. Dust in flour, dip in beaten egg, coat in panko.",
+      "Shallow-fry in 1cm of oil over medium-high heat, 3 minutes per side until golden. Drain and slice.",
+      "In a small pan, combine dashi, mirin, soy sauce and sugar. Bring to a simmer. Add onion slices and cook 3 minutes.",
+      "Arrange sliced katsu on top of the onion in the broth. Pour 2 beaten eggs around the cutlet. Cover and cook 1 minute until egg is just set but still slightly runny.",
+      "Slide everything over a bowl of rice. Serve immediately."
+    ],
+    tip: "The egg should be half-set — soft and custardy, not fully cooked. Cover the pan and count 60–70 seconds exactly, then serve immediately."
+  },
+  {
+    name: "Oyakodon", desc: "Tender chicken and silky egg simmered together in sweet dashi broth, served over fluffy Japanese rice.", emoji: "🥚", cats: ["asian","japanese","quick","comfort"], time: "15 min", cal: "520 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken thighs, bite-sized pieces", qty: "300 g" },
+      { name: "Eggs", qty: "4" },
+      { name: "Dashi stock", qty: "200 ml" },
+      { name: "Mirin", qty: "3 tbsp" },
+      { name: "Soy sauce", qty: "2 tbsp" },
+      { name: "Sugar", qty: "1 tsp" },
+      { name: "Onion, thinly sliced", qty: "½" },
+      { name: "Steamed Japanese rice", qty: "2 bowls" },
+      { name: "Mitsuba or green onion, chopped", qty: "2 tbsp" },
+    ],
+    steps: [
+      "Combine dashi, mirin, soy sauce and sugar in a small pan. Bring to a simmer.",
+      "Add onion slices, cook 2 minutes until translucent.",
+      "Add chicken pieces. Simmer over medium heat 5 minutes until cooked through.",
+      "Beat eggs lightly — you want streaks of yolk and white, not fully mixed.",
+      "Pour eggs in a circular motion over the chicken. Cover, cook 1 minute until just set but still soft.",
+      "Slide gently over rice bowls. Scatter mitsuba or green onion on top."
+    ],
+    tip: "Stir the egg mixture only 3–4 times — keeping yolk and white separate gives that beautiful two-tone custard texture that defines great oyakodon."
+  },
+  {
+    name: "Japchae", desc: "Korean glass noodles stir-fried with spinach, mushrooms, carrot and beef in a savoury-sweet soy glaze.", emoji: "🍝", cats: ["asian","korean","healthy"], time: "25 min", cal: "430 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Dangmyeon (sweet potato glass noodles)", qty: "150 g" },
+      { name: "Beef sirloin, thinly sliced", qty: "150 g" },
+      { name: "Spinach, blanched and squeezed", qty: "100 g" },
+      { name: "Shiitake mushrooms, sliced", qty: "80 g" },
+      { name: "Carrot, julienned", qty: "1" },
+      { name: "Onion, sliced", qty: "½" },
+      { name: "Soy sauce", qty: "3 tbsp" },
+      { name: "Sesame oil", qty: "2 tbsp" },
+      { name: "Sugar", qty: "1 tbsp" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Sesame seeds", qty: "1 tsp" },
+    ],
+    steps: [
+      "Boil noodles 6–8 minutes until tender. Drain, rinse in cold water and cut into 15cm lengths. Toss with 1 tbsp sesame oil and 1 tbsp soy sauce.",
+      "Marinate beef in 1 tbsp soy sauce, 1 tsp sesame oil, garlic and ½ tsp sugar for 10 minutes.",
+      "Stir-fry each vegetable separately in a lightly oiled pan. Set aside.",
+      "Stir-fry beef 2 minutes until cooked. Add remaining soy sauce and sugar.",
+      "Combine noodles, all vegetables and beef in a large bowl. Toss with remaining sesame oil. Taste and adjust seasoning.",
+      "Serve at room temperature, scattered with sesame seeds."
+    ],
+    tip: "Cooking each component separately before combining is the key to japchae — it preserves each ingredient's colour and texture rather than everything going grey and mushy."
+  },
+  {
+    name: "Khao Man Gai", desc: "Poached chicken over rice cooked in chicken fat, with a punchy ginger-garlic dipping sauce and clear broth.", emoji: "🍗", cats: ["asian","thai","healthy"], time: "30 min", cal: "490 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken thighs or breasts, bone-in", qty: "2" },
+      { name: "Jasmine rice, rinsed", qty: "200 g" },
+      { name: "Garlic cloves", qty: "6" },
+      { name: "Fresh ginger, sliced", qty: "30 g" },
+      { name: "Fermented soybean paste (tao jiew)", qty: "2 tbsp" },
+      { name: "Soy sauce", qty: "1 tbsp" },
+      { name: "Fresh ginger, minced (for sauce)", qty: "1 tbsp" },
+      { name: "Garlic, minced (for sauce)", qty: "2 cloves" },
+      { name: "Lime juice", qty: "1 tbsp" },
+      { name: "Sugar", qty: "1 tsp" },
+      { name: "Cucumber, sliced", qty: "½" },
+      { name: "Fresh cilantro", qty: "handful" },
+    ],
+    steps: [
+      "Bring 1 litre of water to a boil with ginger slices and 3 garlic cloves. Add chicken. Reduce to a gentle simmer and poach 15–18 minutes until cooked through. Remove chicken and reserve broth.",
+      "Skim 2 tbsp chicken fat from the broth. Heat in a saucepan and fry remaining garlic until golden. Add rice and stir to coat.",
+      "Add 400ml of the reserved broth. Cook rice covered over low heat until absorbed, about 15 minutes.",
+      "Make dipping sauce: blend soybean paste, minced ginger, minced garlic, soy sauce, lime juice and sugar together.",
+      "Slice chicken. Serve over rice with cucumber, dipping sauce on the side and a small bowl of warm broth topped with cilantro."
+    ],
+    tip: "The entire flavour comes from cooking the rice in the chicken fat and broth — don't substitute with water or the dish loses its soul."
+  },
+  {
+    name: "Kung Pao Chicken", desc: "Wok-fried chicken with dried chillies, Sichuan pepper, peanuts and a glossy, tangy-sweet sauce.", emoji: "🌶️", cats: ["asian","chinese","quick","comfort"], time: "15 min", cal: "480 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken breast, diced 2cm", qty: "300 g" },
+      { name: "Roasted peanuts", qty: "60 g" },
+      { name: "Dried red chillies, halved", qty: "6" },
+      { name: "Sichuan peppercorns", qty: "½ tsp" },
+      { name: "Garlic cloves, minced", qty: "3" },
+      { name: "Fresh ginger, minced", qty: "1 tsp" },
+      { name: "Soy sauce", qty: "2 tbsp" },
+      { name: "Chinkiang vinegar", qty: "1 tbsp" },
+      { name: "Sugar", qty: "1 tbsp" },
+      { name: "Cornstarch", qty: "2 tsp" },
+      { name: "Sesame oil & neutral oil", qty: "1 tbsp each" },
+      { name: "Spring onions, sliced", qty: "3 stalks" },
+    ],
+    steps: [
+      "Marinate chicken with 1 tbsp soy sauce and 1 tsp cornstarch for 10 minutes.",
+      "Mix sauce: remaining soy sauce, vinegar, sugar, 1 tsp cornstarch and 2 tbsp water.",
+      "Heat wok until smoking. Add oil, then dried chillies and Sichuan peppercorns. Stir-fry 30 seconds until fragrant.",
+      "Add chicken. Stir-fry over high heat 3 minutes until golden.",
+      "Add garlic and ginger. Toss 30 seconds. Pour in sauce — it should bubble and thicken immediately.",
+      "Add peanuts and spring onions. Toss, drizzle with sesame oil and serve immediately with steamed rice."
+    ],
+    tip: "The chillies are for flavour, not eating — the longer they stay in the oil, the more heat they release. Remove before serving if you want less spice."
+  },
+  {
+    name: "Goi Cuon (Vietnamese Fresh Rolls)", desc: "Translucent rice paper rolls filled with shrimp, rice vermicelli, herbs and lettuce with peanut dipping sauce.", emoji: "🫔", cats: ["asian","vietnamese","healthy","quick"], time: "20 min", cal: "280 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Rice paper wrappers (22cm)", qty: "8" },
+      { name: "Cooked shrimp, halved lengthwise", qty: "16" },
+      { name: "Rice vermicelli, cooked and cooled", qty: "100 g" },
+      { name: "Butter lettuce leaves", qty: "8" },
+      { name: "Fresh mint leaves", qty: "large handful" },
+      { name: "Fresh Thai basil", qty: "large handful" },
+      { name: "Cucumber, julienned", qty: "½" },
+      { name: "Carrot, julienned", qty: "1" },
+      { name: "Hoisin sauce", qty: "3 tbsp" },
+      { name: "Peanut butter", qty: "1 tbsp" },
+      { name: "Lime juice", qty: "1 tbsp" },
+    ],
+    steps: [
+      "Make dipping sauce: mix hoisin sauce, peanut butter, lime juice and 2 tbsp warm water until smooth.",
+      "Prepare all fillings and lay out in separate piles for easy assembly.",
+      "Fill a large shallow dish with warm water. Dip one rice paper wrapper for 10–15 seconds until just pliable (it will continue to soften).",
+      "Lay on a damp board. Place 2 shrimp halves (pink side down) in a row across the lower third. Add lettuce, vermicelli, herbs, cucumber and carrot.",
+      "Fold up the bottom, fold in the sides and roll tightly. The wrapper will seal itself.",
+      "Serve immediately with peanut dipping sauce."
+    ],
+    tip: "Dip the rice paper for less time than you think — 10 seconds feels too soon, but it will soften fully as you roll. Over-soaking makes it tear."
+  },
+  {
+    name: "Cacio e Pepe", desc: "Rome's simplest pasta — just tonnarelli, aged Pecorino, Parmesan and a ridiculous amount of black pepper.", emoji: "🍝", cats: ["western","italian","quick","vegetarian","comfort"], time: "15 min", cal: "580 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Spaghetti or tonnarelli", qty: "200 g" },
+      { name: "Pecorino Romano, finely grated", qty: "80 g" },
+      { name: "Parmesan, finely grated", qty: "30 g" },
+      { name: "Whole black peppercorns, coarsely cracked", qty: "2 tsp" },
+      { name: "Salt (for pasta water)", qty: "to taste" },
+    ],
+    steps: [
+      "Toast cracked peppercorns in a dry skillet over medium heat 1 minute until fragrant. Set aside.",
+      "Cook pasta in generously salted boiling water until just shy of al dente. Reserve 1 cup pasta water.",
+      "Add toasted pepper to the skillet with ¼ cup pasta water. Simmer 30 seconds.",
+      "Add drained pasta and toss vigorously to coat. Remove pan from heat.",
+      "Gradually add both cheeses, tossing constantly and adding pasta water little by little to form a creamy, emulsified sauce — not grainy, not dry.",
+      "Serve immediately with extra pepper grated on top."
+    ],
+    tip: "Grate the cheese on the finest setting possible and add it off heat — medium heat and fine-grated cheese emulsify smoothly; coarse cheese over heat clumps into a stringy mess."
+  },
+  {
+    name: "Pasta e Ceci", desc: "Thick Italian soup of small pasta tubes and chickpeas in a garlicky, rosemary-scented tomato broth.", emoji: "🫘", cats: ["western","italian","vegetarian","comfort","healthy"], time: "30 min", cal: "430 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Canned chickpeas, drained", qty: "2 × 400 g" },
+      { name: "Ditalini or small pasta", qty: "150 g" },
+      { name: "Canned whole tomatoes", qty: "200 g" },
+      { name: "Garlic cloves, minced", qty: "4" },
+      { name: "Fresh rosemary", qty: "2 sprigs" },
+      { name: "Anchovy fillet (optional)", qty: "1" },
+      { name: "Olive oil", qty: "4 tbsp" },
+      { name: "Vegetable stock", qty: "600 ml" },
+      { name: "Parmesan rind (optional)", qty: "1 piece" },
+      { name: "Salt, pepper & chilli flakes", qty: "to taste" },
+    ],
+    steps: [
+      "Heat olive oil in a large pot. Fry garlic, rosemary and anchovy (if using) over medium heat 2 minutes.",
+      "Add tomatoes, crushing them. Cook 5 minutes.",
+      "Add chickpeas and stock. Simmer 10 minutes. Remove rosemary.",
+      "Use a hand blender to purée about one-third of the soup in the pot — this creates the creamy base while keeping texture.",
+      "Add pasta and cook until al dente, 8–10 minutes. The soup should be thick, not brothy.",
+      "Serve with a generous pour of olive oil and black pepper."
+    ],
+    tip: "Adding a Parmesan rind to the broth while it simmers adds enormous depth — save your rinds in the freezer for exactly this purpose."
+  },
+  {
+    name: "Spaghetti Puttanesca", desc: "Punchy Neapolitan pasta with olives, anchovies, capers, garlic and crushed tomatoes. Ready in 20 minutes.", emoji: "🍝", cats: ["western","italian","quick","comfort"], time: "20 min", cal: "520 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Spaghetti", qty: "200 g" },
+      { name: "Canned chopped tomatoes", qty: "400 g" },
+      { name: "Anchovy fillets in oil", qty: "5" },
+      { name: "Kalamata olives, pitted", qty: "60 g" },
+      { name: "Capers, rinsed", qty: "2 tbsp" },
+      { name: "Garlic cloves, thinly sliced", qty: "3" },
+      { name: "Chilli flakes", qty: "½ tsp" },
+      { name: "Olive oil", qty: "3 tbsp" },
+      { name: "Fresh parsley, chopped", qty: "handful" },
+    ],
+    steps: [
+      "Cook spaghetti in well-salted boiling water until al dente. Reserve ½ cup pasta water.",
+      "Heat olive oil in a wide pan. Add anchovies and press them until they dissolve into the oil, about 1 minute.",
+      "Add garlic and chilli flakes. Cook 1 minute until fragrant but not coloured.",
+      "Add tomatoes. Simmer 10 minutes until slightly reduced. Add olives and capers.",
+      "Add drained pasta, toss with a splash of pasta water.",
+      "Scatter parsley on top. No cheese needed — the anchovies provide all the salt and depth."
+    ],
+    tip: "Don't add salt before tasting — anchovies, olives and capers are all very salty. The pasta cooking water is likely all the extra seasoning you need."
+  },
+  {
+    name: "Chicken Shawarma Bowl", desc: "Spiced roasted chicken with turmeric rice, garlic sauce, pickled red cabbage and flatbread crisps.", emoji: "🫔", cats: ["middleeastern","healthy","western"], time: "30 min", cal: "560 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken thighs, boneless", qty: "400 g" },
+      { name: "Basmati rice", qty: "200 g" },
+      { name: "Turmeric", qty: "½ tsp" },
+      { name: "Cumin", qty: "1 tsp" },
+      { name: "Smoked paprika", qty: "1 tsp" },
+      { name: "Cinnamon", qty: "¼ tsp" },
+      { name: "Garlic cloves, minced", qty: "4" },
+      { name: "Lemon juice", qty: "2 tbsp" },
+      { name: "Olive oil", qty: "3 tbsp" },
+      { name: "Greek yoghurt", qty: "100 g" },
+      { name: "Red cabbage, finely shredded", qty: "150 g" },
+      { name: "Red wine vinegar", qty: "1 tbsp" },
+    ],
+    steps: [
+      "Marinate chicken: combine cumin, paprika, cinnamon, half the garlic, lemon juice and 2 tbsp olive oil. Coat chicken and marinate 20 minutes.",
+      "Pickle cabbage: toss with red wine vinegar, a pinch of salt and sugar. Set aside.",
+      "Make garlic sauce: mix yoghurt with remaining garlic, a squeeze of lemon and salt.",
+      "Cook rice with turmeric added to the water.",
+      "Roast chicken at 220°C / 425°F for 20 minutes, or pan-fry over high heat 6 minutes per side until charred. Rest and slice.",
+      "Assemble bowls: turmeric rice, sliced chicken, pickled cabbage. Drizzle garlic sauce over the top."
+    ],
+    tip: "The pickled cabbage is not optional — its sharp crunch cuts through the richness of the chicken and garlic sauce and makes the whole bowl work."
+  },
+  {
+    name: "Fattoush Salad", desc: "Levantine salad of toasted pita chips, cucumber, tomato and radish with a tangy sumac-lemon dressing.", emoji: "🥗", cats: ["middleeastern","mediterranean","healthy","quick","vegetarian"], time: "12 min", cal: "290 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Stale pita breads", qty: "2" },
+      { name: "Romaine lettuce, torn", qty: "½ head" },
+      { name: "Cherry tomatoes, halved", qty: "150 g" },
+      { name: "Cucumber, diced", qty: "1" },
+      { name: "Radishes, sliced", qty: "5" },
+      { name: "Fresh mint and parsley", qty: "large handful" },
+      { name: "Sumac", qty: "1 tsp" },
+      { name: "Lemon juice", qty: "3 tbsp" },
+      { name: "Olive oil", qty: "3 tbsp" },
+      { name: "Garlic clove, minced", qty: "1" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Tear pita into rough pieces and toast in a 200°C oven for 8 minutes until completely crisp, or fry in olive oil. Season with salt.",
+      "Whisk lemon juice, olive oil, garlic, sumac and salt into a dressing.",
+      "Combine lettuce, tomatoes, cucumber, radishes, mint and parsley in a bowl.",
+      "Toss salad with most of the dressing.",
+      "Add toasted pita pieces and toss once more. Serve immediately so the chips stay crunchy.",
+      "Finish with extra sumac dusted over the top."
+    ],
+    tip: "The pita must go in at the last second — even 5 minutes after dressing and the chips turn soggy. Make fattoush to eat immediately."
+  },
+  {
+    name: "Ful Medames", desc: "Egyptian slow-cooked fava beans with cumin, garlic, lemon and olive oil. A hearty, earthy vegetarian staple.", emoji: "🫘", cats: ["middleeastern","vegetarian","healthy","quick"], time: "15 min", cal: "340 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Canned fava beans (ful), drained", qty: "2 × 400 g" },
+      { name: "Garlic cloves, minced", qty: "3" },
+      { name: "Lemon juice", qty: "3 tbsp" },
+      { name: "Extra-virgin olive oil", qty: "4 tbsp" },
+      { name: "Ground cumin", qty: "1 tsp" },
+      { name: "Chilli flakes", qty: "¼ tsp" },
+      { name: "Fresh parsley, chopped", qty: "handful" },
+      { name: "Tomato, diced", qty: "1" },
+      { name: "Hard-boiled eggs", qty: "2" },
+      { name: "Warm pita bread", qty: "2" },
+    ],
+    steps: [
+      "Warm beans in a saucepan with a splash of water over medium heat, 5 minutes.",
+      "Mash roughly with a fork — leaving about half the beans whole.",
+      "Stir in garlic, lemon juice, cumin and chilli flakes. Simmer 3 minutes.",
+      "Transfer to plates. Drizzle generously with olive oil.",
+      "Top with diced tomato and fresh parsley. Halve the hard-boiled eggs and arrange alongside.",
+      "Serve with warm pita for scooping."
+    ],
+    tip: "Use the best olive oil you have — it goes on at the end and is very much part of the flavour, not just a garnish."
+  },
+  {
+    name: "Tabbouleh Bowl", desc: "Fine bulgur wheat with mountains of flat-leaf parsley, mint, tomato, and a bright lemon-olive oil dressing.", emoji: "🌿", cats: ["middleeastern","mediterranean","vegetarian","healthy","quick"], time: "15 min", cal: "310 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Fine bulgur wheat", qty: "60 g" },
+      { name: "Flat-leaf parsley, finely chopped", qty: "large bunch (80g)" },
+      { name: "Fresh mint, finely chopped", qty: "small bunch (20g)" },
+      { name: "Ripe tomatoes, deseeded and finely diced", qty: "2" },
+      { name: "Spring onions, finely sliced", qty: "3" },
+      { name: "Lemon juice", qty: "4 tbsp" },
+      { name: "Extra-virgin olive oil", qty: "4 tbsp" },
+      { name: "Salt", qty: "to taste" },
+    ],
+    steps: [
+      "Pour boiling water over bulgur (just enough to cover). Cover and leave 10 minutes. Drain any excess and cool.",
+      "Meanwhile, finely chop all the herbs — this is most of the work and most of the dish.",
+      "Combine bulgur, parsley, mint, tomatoes and spring onions.",
+      "Dress with lemon juice and olive oil. Season generously with salt.",
+      "Toss well. Taste — it should be bright, acidic and intensely herby.",
+      "Rest 10 minutes before serving for flavours to meld."
+    ],
+    tip: "Real tabbouleh is primarily herbs, not grain. The bulgur is almost a garnish. If your bowl looks more green than beige, you've got it right."
+  },
+  {
+    name: "Doenjang Jjigae", desc: "Korean fermented soybean paste stew with tofu, zucchini, mushrooms and potato in an anchovy broth.", emoji: "🥘", cats: ["asian","korean","comfort","vegetarian"], time: "20 min", cal: "280 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Firm tofu, cubed", qty: "200 g" },
+      { name: "Doenjang (Korean fermented soybean paste)", qty: "2 tbsp" },
+      { name: "Zucchini, sliced into half-moons", qty: "1" },
+      { name: "Mushrooms (shiitake or enoki)", qty: "80 g" },
+      { name: "Potato, cubed", qty: "1 small" },
+      { name: "Onion, diced", qty: "½" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Anchovy stock or vegetable stock", qty: "500 ml" },
+      { name: "Gochugaru (optional)", qty: "½ tsp" },
+      { name: "Sesame oil", qty: "1 tsp" },
+      { name: "Steamed rice (to serve)", qty: "2 bowls" },
+    ],
+    steps: [
+      "Bring stock to a simmer. Whisk in doenjang paste until fully dissolved.",
+      "Add potato and onion. Cook 5 minutes.",
+      "Add zucchini, mushrooms and garlic. Simmer 5 minutes.",
+      "Add tofu. Simmer gently 3 minutes — don't stir too vigorously or the tofu breaks.",
+      "Add gochugaru if using. Finish with sesame oil.",
+      "Serve bubbling in the pot alongside steamed rice — each spoonful of stew goes over the rice."
+    ],
+    tip: "Doenjang varies in saltiness — add the paste gradually and taste as you go. Store-bought broth can also vary; the final seasoning should happen at the table."
+  },
+  {
+    name: "Tteokbokki", desc: "Chewy Korean rice cakes in a fiery gochujang sauce with fish cakes and hard-boiled egg. Street food at its best.", emoji: "🌶️", cats: ["asian","korean","comfort","quick"], time: "15 min", cal: "430 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Tteok (cylinder rice cakes)", qty: "300 g" },
+      { name: "Fish cakes (eomuk), sliced", qty: "100 g" },
+      { name: "Gochujang (Korean chilli paste)", qty: "3 tbsp" },
+      { name: "Gochugaru (Korean chilli flakes)", qty: "1 tbsp" },
+      { name: "Soy sauce", qty: "1 tbsp" },
+      { name: "Sugar", qty: "1 tbsp" },
+      { name: "Garlic cloves, minced", qty: "2" },
+      { name: "Anchovy stock or water", qty: "400 ml" },
+      { name: "Hard-boiled eggs", qty: "2" },
+      { name: "Green onions, sliced", qty: "2 stalks" },
+    ],
+    steps: [
+      "If using refrigerated rice cakes, soak in warm water 10 minutes to soften.",
+      "Bring stock to a boil with gochujang, gochugaru, soy sauce, sugar and garlic. Stir until paste is dissolved.",
+      "Add rice cakes and fish cakes. Cook over medium-high heat, stirring frequently, 8–10 minutes until sauce thickens and coats the rice cakes.",
+      "Add peeled hard-boiled eggs for the last 2 minutes.",
+      "Scatter green onions on top and serve directly from the pan."
+    ],
+    tip: "The sauce reduces quickly — keep stirring and add splashes of water if it threatens to catch. The sticky, thickened sauce clinging to each rice cake is exactly what you want."
+  },
+  {
+    name: "Congee", desc: "Silky Chinese rice porridge cooked until the grains dissolve into a creamy, comforting broth. Top as you like.", emoji: "🍚", cats: ["asian","chinese","healthy","comfort"], time: "30 min", cal: "310 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Jasmine rice", qty: "100 g" },
+      { name: "Chicken or vegetable stock", qty: "1.2 litres" },
+      { name: "Fresh ginger, sliced", qty: "20 g" },
+      { name: "Soy sauce", qty: "1 tbsp" },
+      { name: "Sesame oil", qty: "1 tsp" },
+      { name: "Soft-boiled egg or century egg", qty: "2" },
+      { name: "Green onions, sliced", qty: "2 stalks" },
+      { name: "Fried shallots", qty: "2 tbsp" },
+      { name: "White pepper", qty: "pinch" },
+      { name: "Ginger, julienned (for topping)", qty: "1 tbsp" },
+    ],
+    steps: [
+      "Rinse rice. For faster cooking, freeze the washed rice for 1 hour first.",
+      "Bring stock to a boil with ginger slices. Add rice.",
+      "Cook over medium heat 25–30 minutes, stirring occasionally, until rice breaks down into a thick porridge. Add more stock or water if needed.",
+      "Season with soy sauce, sesame oil and white pepper. Remove ginger slices.",
+      "Ladle into bowls. Top with egg, green onions, fried shallots and julienned ginger.",
+      "Serve with chilli oil and soy sauce on the side for everyone to adjust."
+    ],
+    tip: "The ratio of rice to liquid is roughly 1:10–12 for true silky congee. It should be much more liquidy than you expect at the start — it thickens dramatically as it cooks."
+  },
+  {
+    name: "Yakisoba", desc: "Japanese wok-fried noodles with pork, cabbage and carrot in a tangy Worcestershire-based sauce.", emoji: "🍜", cats: ["asian","japanese","quick","comfort"], time: "15 min", cal: "490 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Yakisoba noodles (fresh or pre-steamed)", qty: "300 g" },
+      { name: "Pork belly or shoulder, thinly sliced", qty: "150 g" },
+      { name: "Cabbage, roughly chopped", qty: "150 g" },
+      { name: "Carrot, julienned", qty: "1" },
+      { name: "Onion, sliced", qty: "½" },
+      { name: "Yakisoba sauce (or: 2 tbsp Worcestershire, 1 tbsp soy, 1 tbsp ketchup, 1 tsp oyster sauce)", qty: "3 tbsp" },
+      { name: "Neutral oil", qty: "2 tbsp" },
+      { name: "Aonori (dried seaweed flakes)", qty: "1 tsp" },
+      { name: "Beni shoga (red pickled ginger)", qty: "to serve" },
+    ],
+    steps: [
+      "Loosen noodles by hand or briefly microwave 1 minute to separate.",
+      "Heat oil in a wok or griddle over high heat. Add pork and cook until browned, 2 minutes.",
+      "Add onion, carrot and cabbage. Stir-fry 3 minutes until slightly softened.",
+      "Add noodles and toss everything together vigorously.",
+      "Pour yakisoba sauce over everything. Toss until noodles are fully coated and caramelised in spots.",
+      "Plate and top with aonori and a mound of beni shoga."
+    ],
+    tip: "A teppan (flat iron griddle) gives yakisoba its proper caramelised, smoky edge — if you have a cast-iron pan, heat it for 5 minutes before cooking for the closest result."
+  },
+  {
+    name: "Soba Noodle Salad", desc: "Cold buckwheat soba with edamame, cucumber and sesame in a ponzu-ginger dressing. Light and refreshing.", emoji: "🥢", cats: ["asian","japanese","healthy","quick","vegetarian"], time: "12 min", cal: "350 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Soba noodles (dried)", qty: "180 g" },
+      { name: "Edamame (shelled, frozen)", qty: "100 g" },
+      { name: "Cucumber, julienned", qty: "1" },
+      { name: "Radishes, thinly sliced", qty: "4" },
+      { name: "Nori, shredded", qty: "1 sheet" },
+      { name: "Ponzu sauce", qty: "3 tbsp" },
+      { name: "Sesame oil", qty: "1 tbsp" },
+      { name: "Rice vinegar", qty: "1 tbsp" },
+      { name: "Fresh ginger, grated", qty: "1 tsp" },
+      { name: "Sesame seeds", qty: "1 tbsp" },
+      { name: "Toasted white sesame oil", qty: "1 tsp" },
+    ],
+    steps: [
+      "Cook soba in boiling unsalted water 4–5 minutes. Drain and rinse thoroughly under cold running water until the water runs clear.",
+      "Cook frozen edamame per package and cool under cold water.",
+      "Whisk ponzu, sesame oil, rice vinegar and ginger into a dressing.",
+      "Toss cold soba with dressing. Add edamame, cucumber and radish.",
+      "Plate and top with shredded nori and sesame seeds.",
+      "Serve immediately or chill up to 1 hour (add more dressing before serving if it's been sitting)."
+    ],
+    tip: "Rinsing soba thoroughly after cooking is not optional — it removes the surface starch that causes the noodles to clump and turns them glossy and springy."
+  },
+  {
+    name: "Enchiladas Rojas", desc: "Corn tortillas filled with shredded chicken, rolled and baked under a smoky ancho chilli sauce with cheese.", emoji: "🌮", cats: ["western","mexican","comfort"], time: "30 min", cal: "580 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Corn tortillas (15cm)", qty: "8" },
+      { name: "Cooked chicken breast, shredded", qty: "400 g" },
+      { name: "Ancho dried chillies", qty: "3" },
+      { name: "Canned tomatoes", qty: "400 g" },
+      { name: "Garlic cloves", qty: "3" },
+      { name: "Onion", qty: "1" },
+      { name: "Cumin", qty: "1 tsp" },
+      { name: "Chicken stock", qty: "200 ml" },
+      { name: "Cheddar or Oaxacan cheese, grated", qty: "200 g" },
+      { name: "Sour cream and cilantro", qty: "to serve" },
+    ],
+    steps: [
+      "Toast dried chillies in a dry pan 30 seconds. Soak in boiling water 10 minutes. Drain and deseed.",
+      "Blend chillies, tomatoes, half the onion, garlic and cumin with the stock until smooth. Season.",
+      "Simmer sauce in a pan 10 minutes. It should be a deep, brick-red colour.",
+      "Quickly dip each tortilla in warm sauce to soften. Fill with shredded chicken, roll tightly and place seam-side down in a baking dish.",
+      "Pour remaining sauce over the top. Scatter cheese generously.",
+      "Bake at 200°C / 390°F for 15 minutes until cheese is golden. Serve with sour cream and cilantro."
+    ],
+    tip: "Dipping the tortillas briefly in warm sauce before rolling softens them so they don't crack — and also means every bite has flavour all the way through."
+  },
+  {
+    name: "Cobb Salad", desc: "A classic American composed salad with grilled chicken, bacon, egg, avocado, blue cheese and ranch dressing.", emoji: "🥗", cats: ["western","healthy","american"], time: "20 min", cal: "520 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken breast, grilled and sliced", qty: "2" },
+      { name: "Bacon rashers, cooked and chopped", qty: "4" },
+      { name: "Eggs, hard-boiled and halved", qty: "2" },
+      { name: "Avocado, sliced", qty: "1" },
+      { name: "Blue cheese, crumbled", qty: "60 g" },
+      { name: "Cherry tomatoes, halved", qty: "100 g" },
+      { name: "Romaine lettuce, chopped", qty: "1 head" },
+      { name: "Red wine vinegar", qty: "2 tbsp" },
+      { name: "Dijon mustard", qty: "1 tsp" },
+      { name: "Olive oil", qty: "4 tbsp" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Make vinaigrette: whisk red wine vinegar, Dijon, olive oil, salt and pepper.",
+      "Season and grill or pan-fry chicken 6 minutes per side. Rest and slice.",
+      "Arrange lettuce on a large platter. Lay ingredients in distinct rows: chicken, bacon, egg, avocado, blue cheese and tomatoes.",
+      "The Cobb is composed, not tossed — each ingredient in its own column.",
+      "Drizzle dressing over everything at the table.",
+      "Serve with extra dressing on the side."
+    ],
+    tip: "Serve it composed, not tossed — the visual is half the point of a Cobb. Let each diner drag their fork through the rows and create their own combination."
+  },
+  {
+    name: "Buffalo Chicken Rice Bowl", desc: "Crispy buffalo-sauced chicken over white rice with celery, blue cheese crumbles and cooling ranch drizzle.", emoji: "🍗", cats: ["western","american","comfort","healthy"], time: "20 min", cal: "550 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Chicken breast, cubed", qty: "300 g" },
+      { name: "Hot sauce (Frank's RedHot or similar)", qty: "4 tbsp" },
+      { name: "Butter", qty: "2 tbsp" },
+      { name: "Garlic powder", qty: "½ tsp" },
+      { name: "Steamed white rice", qty: "2 bowls" },
+      { name: "Celery stalks, sliced", qty: "2" },
+      { name: "Blue cheese, crumbled", qty: "40 g" },
+      { name: "Ranch dressing", qty: "3 tbsp" },
+      { name: "Cornstarch", qty: "1 tbsp" },
+      { name: "Spring onions, sliced", qty: "2 stalks" },
+    ],
+    steps: [
+      "Toss chicken cubes in cornstarch and garlic powder. Pan-fry in oil over medium-high heat 5–6 minutes until golden and cooked through.",
+      "Melt butter in a small pan. Add hot sauce and stir to combine into buffalo sauce.",
+      "Toss crispy chicken in the buffalo sauce to coat completely.",
+      "Spoon rice into bowls. Pile sauced chicken on top.",
+      "Add celery, blue cheese crumbles and a generous drizzle of ranch.",
+      "Scatter spring onions and serve immediately."
+    ],
+    tip: "The cornstarch coating is key — it gives the chicken a light crispy shell that holds the buffalo sauce rather than letting it soak in and go soggy."
+  },
+  {
+    name: "Massaman Curry", desc: "Mild, fragrant Thai curry with tender potato, chicken and roasted peanuts in a coconut-spiced broth.", emoji: "🥘", cats: ["asian","thai","comfort"], time: "30 min", cal: "560 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Chicken thighs, bite-sized", qty: "600 g" },
+      { name: "Massaman curry paste", qty: "3 tbsp" },
+      { name: "Coconut milk (full fat)", qty: "400 ml" },
+      { name: "Potatoes, cubed 3cm", qty: "2 medium" },
+      { name: "Onion, cut into wedges", qty: "1" },
+      { name: "Roasted peanuts", qty: "60 g" },
+      { name: "Fish sauce", qty: "1 tbsp" },
+      { name: "Palm or brown sugar", qty: "1 tbsp" },
+      { name: "Tamarind paste", qty: "1 tbsp" },
+      { name: "Bay leaves", qty: "2" },
+      { name: "Steamed jasmine rice", qty: "to serve" },
+    ],
+    steps: [
+      "Fry curry paste in 2 tbsp coconut milk in a pot over medium heat for 2 minutes until fragrant.",
+      "Add chicken and brown lightly, 3 minutes.",
+      "Pour in remaining coconut milk and 200ml water. Add potatoes, onion and bay leaves.",
+      "Simmer 20 minutes until potatoes are completely tender and chicken is cooked.",
+      "Season with fish sauce, sugar and tamarind paste. Taste — it should be rich, mildly spiced, slightly sweet and sour.",
+      "Scatter roasted peanuts on top. Serve with jasmine rice."
+    ],
+    tip: "Massaman is the Thai curry that improves with time — make it a day ahead if you can. The potatoes absorb the coconut sauce overnight and become extraordinary."
+  },
+  {
+    name: "Larb Gai", desc: "Thai minced chicken salad with toasted rice powder, fish sauce, lime and fresh herbs. Eaten at room temperature.", emoji: "🌿", cats: ["asian","thai","healthy","quick"], time: "15 min", cal: "320 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Minced chicken", qty: "300 g" },
+      { name: "Shallots, thinly sliced", qty: "3" },
+      { name: "Fish sauce", qty: "2 tbsp" },
+      { name: "Lime juice", qty: "3 tbsp" },
+      { name: "Toasted rice powder (raw rice, toasted and ground)", qty: "2 tbsp" },
+      { name: "Dried chilli flakes", qty: "1 tsp" },
+      { name: "Fresh mint leaves", qty: "large handful" },
+      { name: "Cilantro leaves", qty: "large handful" },
+      { name: "Lemongrass, finely sliced", qty: "1 stalk" },
+      { name: "Spring onions, sliced", qty: "2" },
+      { name: "Sticky or steamed rice (to serve)", qty: "2 portions" },
+    ],
+    steps: [
+      "Make toasted rice powder: dry-toast raw jasmine rice in a pan until golden brown. Cool and grind to a coarse powder in a spice grinder.",
+      "Cook chicken in a pan over medium-high heat, breaking up lumps. Add 1 tbsp fish sauce while cooking. Remove from heat and cool slightly.",
+      "Combine warm (not hot) chicken with shallots, lemongrass, remaining fish sauce, lime juice and chilli flakes.",
+      "Stir in toasted rice powder — it gives the dish its signature nutty texture.",
+      "Fold in fresh mint, cilantro and spring onions.",
+      "Serve immediately with sticky rice and raw vegetables on the side."
+    ],
+    tip: "Toasted rice powder is the ingredient that defines larb — you can't substitute it. Make a big batch and store in a jar; it keeps for a month and goes in everything."
+  },
+  {
+    name: "Com Tam (Vietnamese Broken Rice)", desc: "Vietnamese broken rice plate with grilled lemongrass pork chop, pickled vegetables and nuoc cham.", emoji: "🍖", cats: ["asian","vietnamese","healthy","comfort"], time: "25 min", cal: "540 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Pork shoulder steaks or chops, thin", qty: "2" },
+      { name: "Broken jasmine rice (or regular jasmine rice)", qty: "200 g" },
+      { name: "Lemongrass stalks, finely minced", qty: "2" },
+      { name: "Garlic cloves, minced", qty: "3" },
+      { name: "Fish sauce", qty: "3 tbsp" },
+      { name: "Sugar", qty: "2 tbsp" },
+      { name: "Carrot and daikon, julienned", qty: "100 g each" },
+      { name: "Rice vinegar", qty: "2 tbsp" },
+      { name: "Lime juice", qty: "2 tbsp" },
+      { name: "Fresh cucumber slices and cilantro", qty: "to serve" },
+    ],
+    steps: [
+      "Marinate pork: mix lemongrass, garlic, 2 tbsp fish sauce, 1 tbsp sugar. Coat pork. Marinate 20 minutes minimum.",
+      "Pickle vegetables: toss carrot and daikon with rice vinegar, 1 tsp sugar and salt. Set aside.",
+      "Make nuoc cham: mix 1 tbsp fish sauce, lime juice, 1 tbsp sugar, 4 tbsp water, minced garlic and chilli.",
+      "Cook rice per instructions.",
+      "Grill or pan-sear pork over high heat 3 minutes per side until caramelised and cooked through. Rest briefly.",
+      "Plate rice, sliced pork, pickled veg, fresh cucumber and cilantro. Pour nuoc cham generously over everything."
+    ],
+    tip: "The marinade needs to caramelise in the pan — don't use oil. Add pork to a dry, very hot pan so the sugars char and create that smoky, lacquered crust."
+  },
+  {
+    name: "Spanakopita", desc: "Crispy phyllo pastry triangles filled with spinach, feta and herbs. Greek comfort food at its most satisfying.", emoji: "🥐", cats: ["mediterranean","vegetarian","comfort"], time: "30 min", cal: "390 kcal",
+    serves: 4,
+    ingredients: [
+      { name: "Phyllo pastry sheets", qty: "8" },
+      { name: "Fresh spinach (or frozen, squeezed dry)", qty: "400 g" },
+      { name: "Feta cheese, crumbled", qty: "200 g" },
+      { name: "Eggs", qty: "2" },
+      { name: "Onion, finely diced", qty: "1" },
+      { name: "Fresh dill, chopped", qty: "2 tbsp" },
+      { name: "Fresh parsley, chopped", qty: "2 tbsp" },
+      { name: "Butter or olive oil, melted", qty: "80 g" },
+      { name: "Nutmeg", qty: "pinch" },
+      { name: "Salt & pepper", qty: "to taste" },
+    ],
+    steps: [
+      "Wilt spinach in a pan. When cool, squeeze out all moisture — really squeeze. Roughly chop.",
+      "Mix spinach with feta, sautéed onion, eggs, dill, parsley and nutmeg. Season (carefully — feta is salty).",
+      "Lay a phyllo sheet on a board, brush with melted butter. Lay another sheet on top and brush again.",
+      "Cut the double layer into 3 strips. Place a spoonful of filling at one end of each strip.",
+      "Fold each strip into a triangle (like folding a flag). Brush top with butter.",
+      "Bake at 190°C / 375°F for 20–25 minutes until deep golden and crispy."
+    ],
+    tip: "Removing every drop of moisture from the spinach is the only rule — wet filling = soggy bottom. Salt the wilted spinach and let it drain in a colander, then wring it in a clean cloth."
+  },
+  {
+    name: "Hummus Power Bowl", desc: "Silky hummus with warm spiced chickpeas, roasted vegetables, tahini drizzle and toasted pine nuts.", emoji: "🫘", cats: ["middleeastern","mediterranean","vegetarian","healthy","quick"], time: "15 min", cal: "420 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Good-quality hummus", qty: "300 g" },
+      { name: "Canned chickpeas, drained", qty: "200 g" },
+      { name: "Smoked paprika", qty: "1 tsp" },
+      { name: "Cumin", qty: "½ tsp" },
+      { name: "Olive oil", qty: "4 tbsp" },
+      { name: "Cherry tomatoes, halved", qty: "100 g" },
+      { name: "Cucumber, diced", qty: "½" },
+      { name: "Tahini", qty: "2 tbsp" },
+      { name: "Lemon juice", qty: "2 tbsp" },
+      { name: "Pine nuts, toasted", qty: "2 tbsp" },
+      { name: "Fresh parsley", qty: "handful" },
+      { name: "Warm pita", qty: "2" },
+    ],
+    steps: [
+      "Toss chickpeas with paprika, cumin, salt and 1 tbsp olive oil. Pan-fry over medium-high heat 5 minutes until crispy.",
+      "Thin tahini with lemon juice and 2 tbsp water until it becomes a pourable sauce.",
+      "Spread hummus generously across two bowls, making a well in the centre.",
+      "Spoon warm chickpeas into the well. Arrange tomatoes and cucumber around.",
+      "Drizzle with tahini sauce and olive oil.",
+      "Scatter pine nuts and parsley. Serve with warm pita for scooping."
+    ],
+    tip: "Warm the hummus slightly before serving — cold hummus straight from the fridge has a muted flavour. A quick 30 seconds in the microwave transforms it."
+  },
+  {
+    name: "Korean BBQ Rice Bowl (Bulgogi)", desc: "Tender marinated beef bulgogi caramelised in the pan over steamed rice with kimchi and sesame spinach.", emoji: "🥩", cats: ["asian","korean","comfort","healthy"], time: "20 min", cal: "530 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Beef sirloin or ribeye, very thinly sliced", qty: "300 g" },
+      { name: "Steamed short-grain rice", qty: "2 bowls" },
+      { name: "Soy sauce", qty: "3 tbsp" },
+      { name: "Asian pear or kiwi, grated", qty: "2 tbsp" },
+      { name: "Sugar", qty: "1 tbsp" },
+      { name: "Sesame oil", qty: "2 tbsp" },
+      { name: "Garlic cloves, minced", qty: "3" },
+      { name: "Fresh ginger, grated", qty: "1 tsp" },
+      { name: "Spinach", qty: "100 g" },
+      { name: "Kimchi", qty: "100 g" },
+      { name: "Sesame seeds", qty: "1 tsp" },
+    ],
+    steps: [
+      "Marinate beef: combine soy sauce, grated pear, sugar, sesame oil, garlic and ginger. Add beef slices and marinate 15 minutes.",
+      "Blanch spinach in boiling water 30 seconds. Squeeze dry, toss with 1 tsp sesame oil and a pinch of salt.",
+      "Heat a pan or grill over very high heat. Cook beef in a single layer (don't crowd) 1–2 minutes per side until caramelised. Work in batches.",
+      "Arrange steamed rice in bowls. Top with bulgogi, sesame spinach and kimchi.",
+      "Drizzle any pan juices over the beef. Scatter sesame seeds."
+    ],
+    tip: "Grated Asian pear tenderises the beef through natural enzymes and also caramelises beautifully — it's the ingredient that makes Korean BBQ taste distinctively different."
+  },
+  {
+    name: "Mapo Eggplant (Mabodofu style)", desc: "Silky eggplant braised in a fiery, numbing Sichuan sauce with pork mince, black bean and chilli oil.", emoji: "🍆", cats: ["asian","chinese","vegetarian","comfort"], time: "20 min", cal: "370 kcal",
+    serves: 2,
+    ingredients: [
+      { name: "Eggplants, cut into batons", qty: "2 medium" },
+      { name: "Pork mince (or omit for vegetarian)", qty: "100 g" },
+      { name: "Doubanjiang (spicy bean paste)", qty: "2 tbsp" },
+      { name: "Fermented black beans, chopped", qty: "1 tbsp" },
+      { name: "Garlic cloves, minced", qty: "3" },
+      { name: "Fresh ginger, minced", qty: "1 tsp" },
+      { name: "Sichuan peppercorns, ground", qty: "½ tsp" },
+      { name: "Chicken or vegetable stock", qty: "200 ml" },
+      { name: "Soy sauce", qty: "1 tbsp" },
+      { name: "Cornstarch + water", qty: "1 tbsp each" },
+      { name: "Sesame oil & green onions", qty: "to finish" },
+    ],
+    steps: [
+      "Salt eggplant batons 10 minutes. Rinse and pat dry.",
+      "Deep-fry or roast eggplant until golden and soft. Set aside.",
+      "Fry pork mince in oil until cooked. Add doubanjiang and black beans — fry 1 minute until oil turns red.",
+      "Add garlic, ginger and Sichuan pepper. Cook 30 seconds.",
+      "Add stock and soy sauce. Bring to a boil. Add eggplant and simmer 3 minutes.",
+      "Stir in cornstarch slurry to thicken the sauce. Finish with sesame oil and green onions. Serve over rice."
+    ],
+    tip: "Salting and resting the eggplant draws out moisture so it absorbs the sauce instead of steaming. Don't skip this step or you'll get watery results."
+  },
+];
+
+
+let activeFilter = "all";
+let spinCount = 0;
+let history = [];
+let currentMeal = null;
+let currentServes = 2;
+let recipeOpen = false;
+const diceFrames = ["⚀","⚁","⚂","⚃","⚄","⚅"];
+
+const d = new Date();
+document.getElementById("date-display").textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+updateCounters();
+
+document.getElementById("filters").addEventListener("click", e => {
+  const btn = e.target.closest(".filter-btn");
+  if (!btn) return;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  activeFilter = btn.dataset.cat;
+  updateCounters();
+});
+
+function getPool() {
+  return activeFilter === "all" ? meals : meals.filter(m => m.cats.includes(activeFilter));
+}
+
+function updateCounters() {
+  document.getElementById("cnt-total").textContent = meals.length;
+  document.getElementById("cnt-avail").textContent = getPool().length;
+  document.getElementById("cnt-spins").textContent = spinCount;
+  document.getElementById("footer-count").textContent = meals.length + " meals in the deck";
+}
+
+function spin() {
+  const pool = getPool();
+  if (!pool.length) return;
+
+  // Close recipe if open
+  closeRecipe();
+
+  const flash = document.getElementById("flash");
+  flash.classList.add("show");
+  setTimeout(() => flash.classList.remove("show"), 150);
+
+  const dice = document.getElementById("dice3d");
+  const hint = document.getElementById("dice-hint");
+  if (dice.classList.contains("rolling")) return; // prevent double-click
+
+  dice.classList.add("rolling");
+  hint.textContent = "Deciding...";
+
+  setTimeout(() => {
+    dice.classList.remove("rolling");
+    hint.textContent = "Click to roll again";
+
+    currentMeal = pool[Math.floor(Math.random() * pool.length)];
+    currentServes = currentMeal.serves;
+    showResult(currentMeal);
+    spinCount++;
+    addHistory(currentMeal);
+    updateCounters();
+    document.getElementById("again-btn").style.display = "block";
+  }, 750);
+}
+
+// ── Real food photo loader ──
+async function loadMealPhoto(meal) {
+  const wrap = document.getElementById("result-photo-wrap");
+  if (!wrap) return;
+
+  // Show spinner while loading
+  wrap.innerHTML = `<div class="result-photo-spinner" id="result-photo-fallback">${meal.emoji}</div>`;
+
+  const name = meal.name;
+
+  // 1. Try TheMealDB (free, no key, real dish photos)
+  try {
+    const r = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(name)}`);
+    const d = await r.json();
+    if (d.meals && d.meals[0] && d.meals[0].strMealThumb) {
+      setPhoto(wrap, d.meals[0].strMealThumb, name, meal.emoji);
+      return;
+    }
+  } catch(e) {}
+
+  // 2. Try Wikimedia Commons food image search (free, no key)
+  try {
+    const query = encodeURIComponent(name + ' food');
+    const r = await fetch(`https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(name)}&prop=pageimages&format=json&pithumbsize=300&origin=*`);
+    const d = await r.json();
+    const pages = d.query.pages;
+    const page = pages[Object.keys(pages)[0]];
+    if (page.thumbnail && page.thumbnail.source) {
+      setPhoto(wrap, page.thumbnail.source, name, meal.emoji);
+      return;
+    }
+  } catch(e) {}
+
+  // 3. Fallback: emoji stays
+  // already showing emoji, nothing to do
+}
+
+function setPhoto(wrap, src, name, emoji) {
+  const img = document.createElement('img');
+  img.className = 'result-photo loading';
+  img.alt = name;
+  img.onload = () => { img.classList.remove('loading'); img.classList.add('loaded'); };
+  img.onerror = () => {
+    wrap.innerHTML = `<div class="result-photo-fallback">${emoji}</div>`;
+  };
+  img.src = src;
+  wrap.innerHTML = '';
+  wrap.appendChild(img);
+}
+
+function showResult(meal) {
+  currentMeal = meal;
+  currentServes = meal.serves;
+  document.getElementById("placeholder").style.display = "none";
+  const content = document.getElementById("result-content");
+  content.classList.remove("show");
+
+  const primaryCat = meal.cats[0];
+  const tagsHtml = meal.cats.map(c => `<span class="result-tag">${c}</span>`).join("");
+
+  content.innerHTML = `
+    <div class="result-meta">
+      <span class="result-category">${primaryCat}</span>
+      <span class="result-time">⏱ ${meal.time}</span>
+      <span class="result-cal">🔥 ${meal.cal}</span>
+    </div>
+    <div class="result-photo-wrap" id="result-photo-wrap">
+      <div class="result-photo-fallback" id="result-photo-fallback">${meal.emoji}</div>
+    </div>
+    <h2 class="result-name">${meal.name}</h2>
+    <p class="result-desc">${meal.desc}</p>
+    <div class="result-tags">${tagsHtml}</div>
+    <div class="btn-row">
+      <button class="recipe-toggle-btn" id="recipe-toggle-btn" onclick="toggleRecipe()">
+        ✦ View Full Recipe
+      </button>
+      <a class="allrecipes-link" href="https://www.allrecipes.com/search?q=${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        AllRecipes
+      </a>
+      <a class="youtube-link" href="https://www.youtube.com/results?search_query=how+to+make+${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        Watch on YouTube
+      </a>
+    </div>
+  `;
+
+  void content.offsetWidth;
+  content.classList.add("show");
+  // Load real food photo
+  loadMealPhoto(meal);
+  // Auto-open recipe drawer
+  closeRecipe();
+  setTimeout(() => openRecipe(), 200);
+}
+
+function toggleRecipe() {
+  if (recipeOpen) { closeRecipe(); } else { openRecipe(); }
+}
+
+function closeRecipe() {
+  document.getElementById("recipe-drawer").classList.remove("open");
+  recipeOpen = false;
+  const btn = document.getElementById("recipe-toggle-btn");
+  if (btn) btn.textContent = "✦ View Full Recipe";
+}
+
+function openRecipe() {
+  if (!currentMeal) return;
+  renderRecipe(currentMeal, currentServes);
+  document.getElementById("recipe-drawer").classList.add("open");
+  recipeOpen = true;
+  const btn = document.getElementById("recipe-toggle-btn");
+  if (btn) btn.textContent = "✦ Hide Recipe";
+  setTimeout(() => {
+    document.getElementById("recipe-drawer").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, 300);
+}
+
+function changeServes(delta) {
+  currentServes = Math.max(1, Math.min(12, currentServes + delta));
+  renderRecipe(currentMeal, currentServes);
+}
+
+function scaleQty(qty, baseServes, targetServes) {
+  // Extract leading number(s) and scale them
+  return qty.replace(/[\d.⅛¼⅓½⅔¾]+/g, (match) => {
+    const fractions = { '⅛': 0.125, '¼': 0.25, '⅓': 0.333, '½': 0.5, '⅔': 0.667, '¾': 0.75 };
+    const num = fractions[match] !== undefined ? fractions[match] : parseFloat(match);
+    if (isNaN(num)) return match;
+    const scaled = (num / baseServes) * targetServes;
+    // Format nicely
+    if (scaled === Math.floor(scaled)) return String(scaled);
+    const nice = Math.round(scaled * 4) / 4;
+    const niceFrac = { 0.25: '¼', 0.5: '½', 0.75: '¾' };
+    const frac = nice % 1;
+    const whole = Math.floor(nice);
+    if (niceFrac[frac]) return (whole > 0 ? whole + ' ' : '') + niceFrac[frac];
+    return nice.toFixed(1).replace(/\.0$/, '');
+  });
+}
+
+function renderRecipe(meal, serves) {
+  const ingsHtml = meal.ingredients.map(ing => `
+    <li>
+      <span class="ing-name">${ing.name}</span>
+      <span class="ing-qty">${scaleQty(ing.qty, meal.serves, serves)}</span>
+    </li>
+  `).join("");
+
+  const stepsHtml = meal.steps.map(s => `<li>${s}</li>`).join("");
+
+  document.getElementById("recipe-inner").innerHTML = `
+    <div class="recipe-header">
+      <div class="recipe-title">${meal.emoji} <em>${meal.name}</em> — Recipe</div>
+      <div class="recipe-serves">
+        Serves
+        <div class="serves-ctrl">
+          <button class="serves-btn" onclick="changeServes(-1)">−</button>
+          <span class="serves-num" id="serves-num">${serves}</span>
+          <button class="serves-btn" onclick="changeServes(+1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="recipe-body">
+      <div class="ingredients-section">
+        <h3>✦ Ingredients</h3>
+        <ul class="ingredient-list">${ingsHtml}</ul>
+      </div>
+      <div class="steps-section">
+        <h3>✦ Method</h3>
+        <ol class="steps-list">${stepsHtml}</ol>
+        ${meal.tip ? `<div class="tip-box"><strong>✦ Chef's tip</strong>${meal.tip}</div>` : ''}
+        <a class="allrecipes-drawer-link" href="https://www.allrecipes.com/search?q=${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Find more ${meal.name} recipes on AllRecipes ↗
+        </a>
+        <a class="allrecipes-drawer-link" href="https://www.youtube.com/results?search_query=how+to+make+${encodeURIComponent(meal.name)}" target="_blank" rel="noopener" style="border-color:#FF0000;color:#FF0000;margin-top:10px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          Watch how to make ${meal.name} on YouTube ↗
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+function addHistory(meal) {
+  history.unshift(meal);
+  if (history.length > 8) history.pop();
+  const section = document.getElementById("history-section");
+  section.classList.add("show");
+  const list = document.getElementById("history-list");
+  list.innerHTML = history.map((m, i) => `
+    <div class="history-item" onclick="historyPick(${i})">
+      <span class="h-emoji">${m.emoji}</span>${m.name}
+    </div>
+  `).join("");
+}
+
+// ── Fridge Feature ──
+let fridgeIngredients = [];
+let fridgeThreshold = 2;
+let fridgeOpen = false;
+
+function toggleFridge() {
+  fridgeOpen = !fridgeOpen;
+  document.getElementById("fridge-panel").classList.toggle("open", fridgeOpen);
+  document.getElementById("fridge-toggle").classList.toggle("active", fridgeOpen);
+}
+
+function addFridgeIngredients() {
+  const input = document.getElementById("fridge-input");
+  const raw = input.value.trim();
+  if (!raw) return;
+  // split by comma or semicolon
+  const items = raw.split(/[,;]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+  items.forEach(item => {
+    if (item && !fridgeIngredients.includes(item)) fridgeIngredients.push(item);
+  });
+  input.value = "";
+  renderChips();
+  runFridgeMatch();
+}
+
+function removeFridgeIngredient(item) {
+  fridgeIngredients = fridgeIngredients.filter(i => i !== item);
+  renderChips();
+  runFridgeMatch();
+}
+
+function renderChips() {
+  const container = document.getElementById("fridge-chips");
+  if (!fridgeIngredients.length) { container.innerHTML = ""; return; }
+  container.innerHTML = fridgeIngredients.map(item => `
+    <div class="fridge-chip" onclick="removeFridgeIngredient('${item.replace(/'/g,"\\'")}')">
+      ${item} <span class="rm">×</span>
+    </div>
+  `).join("");
+}
+
+function updateThreshold(val) {
+  fridgeThreshold = parseInt(val);
+  const label = document.getElementById("threshold-val");
+  label.textContent = fridgeThreshold + " ingredient" + (fridgeThreshold > 1 ? "s" : "");
+  runFridgeMatch();
+}
+
+function runFridgeMatch() {
+  const resultsEl = document.getElementById("fridge-results");
+  if (!fridgeIngredients.length) { resultsEl.style.display = "none"; return; }
+
+  // Score each meal
+  const scored = meals.map(meal => {
+    const mealIngNames = meal.ingredients.map(i => i.name.toLowerCase());
+    let matched = [];
+    let missing = [];
+    fridgeIngredients.forEach(fi => {
+      // fuzzy: check if any ingredient name contains this fridge item keyword
+      const hit = mealIngNames.some(min => min.includes(fi) || fi.includes(min.split(/[\s,]/)[0]));
+      if (hit) matched.push(fi);
+    });
+    mealIngNames.forEach(min => {
+      const key = min.split(/[\s,(]/)[0]; // first word
+      const covered = fridgeIngredients.some(fi => min.includes(fi) || fi.includes(key));
+      if (!covered) missing.push(min.split(",")[0]); // short name
+    });
+    const pct = Math.round((matched.length / meal.ingredients.length) * 100);
+    return { meal, matched, missing: missing.slice(0, 4), pct };
+  })
+  .filter(s => s.matched.length >= fridgeThreshold)
+  .sort((a, b) => b.matched.length - a.matched.length || b.pct - a.pct);
+
+  resultsEl.style.display = "block";
+
+  if (!scored.length) {
+    resultsEl.innerHTML = `
+      <p class="fridge-results-label">✦ Fridge matches</p>
+      <p class="fridge-no-results">No meals match at least ${fridgeThreshold} ingredient${fridgeThreshold>1?'s':''}. Try lowering the threshold or adding more ingredients.</p>
+    `;
+    return;
+  }
+
+  const topScore = scored[0].matched.length;
+  resultsEl.innerHTML = `
+    <p class="fridge-results-label">✦ ${scored.length} meal${scored.length>1?'s':''} match your fridge — click any to pick it</p>
+    <div class="fridge-meal-list">
+      ${scored.map((s, idx) => `
+        <div class="fridge-meal-row ${s.matched.length === topScore && idx < 3 ? 'top-match' : ''}"
+             onclick="pickFridgeMeal(${meals.indexOf(s.meal)})">
+          <div class="fridge-meal-emoji">${s.meal.emoji}</div>
+          <div class="fridge-meal-info">
+            <div class="fridge-meal-name">${s.meal.name}</div>
+            <div class="fridge-meal-matched">
+              ✔ ${s.matched.join(", ") || "—"}
+              ${s.missing.length ? `<span class="missing"> · still need: ${s.missing.join(", ")}${s.missing.length === 4 ? '…' : ''}</span>` : '<span style="color:var(--sage)"> · you have everything!</span>'}
+            </div>
+          </div>
+          <div class="fridge-match-bar-wrap">
+            <div class="fridge-match-pct">${s.pct}%</div>
+            <div class="fridge-match-sub">match</div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function pickFridgeMeal(idx) {
+  const meal = meals[idx];
+  showResult(meal);
+  addHistory(meal);
+  spinCount++;
+  updateCounters();
+  document.getElementById("again-btn").style.display = "block";
+  // scroll to result
+  setTimeout(() => document.getElementById("result-card").scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+}
+
+function historyPick(i) {
+  showResult(history[i]);
+}
+</script>
+</body>
+</html>
