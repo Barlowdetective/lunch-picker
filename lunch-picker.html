@@ -293,7 +293,7 @@
     position: relative;
     z-index: 1;
   }
-  .youtube-link:hover { border-color: #FF0000; color: #FF0000; }
+  .youtube-link:hover { border-color: #FF2442; color: #FF2442; }
   .youtube-link svg { flex-shrink: 0; }
 
   /* Recipe button inside card */
@@ -1912,735 +1912,185 @@ const meals = [
     ],
     tip: "Starting the salmon skin-side down in a cold-ish pan (not ripping hot) and letting it come up to heat gives a uniformly crispy skin without the flesh overcooking."
   },
-  // ── New meals ──
+  // ── Recipes from uploaded sheet ──
   {
-    name: "Dan Dan Noodles", desc: "Silky wheat noodles in a numbing, spicy sesame sauce with pork mince, chilli oil and preserved vegetables.", emoji: "🍜", cats: ["asian","chinese","comfort"], time: "20 min", cal: "540 kcal",
+    name: "低卡炸茄条",
+    desc: "空气炸锅版低卡炸茄条，外酥内嫩，裹蛋液淀粉糊，撒亚麻籽芝麻盐，健康又满足。",
+    emoji: "🍆", cats: ["chinese","healthy","vegetarian","quick"], time: "35 min", cal: "180 kcal",
     serves: 2,
     ingredients: [
-      { name: "Wheat noodles (thin)", qty: "200 g" },
-      { name: "Minced pork", qty: "150 g" },
-      { name: "Tahini or Chinese sesame paste", qty: "3 tbsp" },
-      { name: "Soy sauce", qty: "2 tbsp" },
-      { name: "Chilli oil", qty: "2 tbsp" },
-      { name: "Sichuan peppercorns, toasted & ground", qty: "½ tsp" },
-      { name: "Ya cai (Yibin preserved vegetables) or chopped pickles", qty: "2 tbsp" },
-      { name: "Garlic cloves, minced", qty: "2" },
-      { name: "Rice vinegar", qty: "1 tbsp" },
-      { name: "Green onions, sliced", qty: "2 stalks" },
+      { name: "茄子", qty: "2根" },
+      { name: "鸡蛋", qty: "2个" },
+      { name: "玉米淀粉", qty: "1勺" },
+      { name: "亚麻籽芝麻盐", qty: "适量" },
+      { name: "辣椒面（可选）", qty: "适量" },
+      { name: "盐（腌制用）", qty: "适量" },
     ],
     steps: [
-      "Whisk together sesame paste, soy sauce, chilli oil, Sichuan pepper, vinegar and 3 tbsp warm water into a smooth sauce.",
-      "Cook noodles in boiling salted water until al dente. Reserve ¼ cup cooking water, drain.",
-      "Brown pork mince in a dry pan over high heat, breaking into crumbs. Season with a splash of soy sauce. Add preserved vegetables and toss.",
-      "Toss hot noodles with the sauce, adding pasta water to loosen.",
-      "Divide between bowls. Top with pork, green onions and an extra drizzle of chilli oil."
+      "处理茄子：茄子切条，放盐腌制10分钟，清水多洗几遍，挤干水分。",
+      "调面糊：打2个鸡蛋，加1勺玉米淀粉，搅拌成糊。",
+      "裹糊铺制：茄子条倒入面糊搅和均匀，铺在空气炸锅垫纸的炸篮里，铺平整。",
+      "空气炸制：空气炸锅180度烤25分钟，中途多翻几次面。",
+      "调味：出炉后撒入亚麻籽芝麻盐、辣椒面，即可享用。",
     ],
-    tip: "The Sichuan pepper is what makes this dish — it creates a tingling numbness (má) that balances the heat. Don't skip it or substitute with regular pepper."
+    tip: "腌制后一定要把茄子的水分挤干，这样面糊才能裹得均匀，口感更酥脆。"
   },
   {
-    name: "Katsu Don", desc: "Crispy panko-breaded pork cutlet simmered in a dashi-mirin broth with egg, served over steamed rice.", emoji: "🍚", cats: ["asian","japanese","comfort"], time: "25 min", cal: "650 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Pork loin cutlets", qty: "2 × 150 g" },
-      { name: "Panko breadcrumbs", qty: "80 g" },
-      { name: "Flour", qty: "3 tbsp" },
-      { name: "Eggs", qty: "3" },
-      { name: "Dashi stock", qty: "150 ml" },
-      { name: "Mirin", qty: "2 tbsp" },
-      { name: "Soy sauce", qty: "2 tbsp" },
-      { name: "Sugar", qty: "1 tsp" },
-      { name: "Onion, thinly sliced", qty: "½" },
-      { name: "Steamed Japanese rice", qty: "2 bowls" },
-      { name: "Oil for frying", qty: "as needed" },
-    ],
-    steps: [
-      "Pound pork cutlets to 1cm thick. Season. Dust in flour, dip in beaten egg, coat in panko.",
-      "Shallow-fry in 1cm of oil over medium-high heat, 3 minutes per side until golden. Drain and slice.",
-      "In a small pan, combine dashi, mirin, soy sauce and sugar. Bring to a simmer. Add onion slices and cook 3 minutes.",
-      "Arrange sliced katsu on top of the onion in the broth. Pour 2 beaten eggs around the cutlet. Cover and cook 1 minute until egg is just set but still slightly runny.",
-      "Slide everything over a bowl of rice. Serve immediately."
-    ],
-    tip: "The egg should be half-set — soft and custardy, not fully cooked. Cover the pan and count 60–70 seconds exactly, then serve immediately."
-  },
-  {
-    name: "Oyakodon", desc: "Tender chicken and silky egg simmered together in sweet dashi broth, served over fluffy Japanese rice.", emoji: "🥚", cats: ["asian","japanese","quick","comfort"], time: "15 min", cal: "520 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Chicken thighs, bite-sized pieces", qty: "300 g" },
-      { name: "Eggs", qty: "4" },
-      { name: "Dashi stock", qty: "200 ml" },
-      { name: "Mirin", qty: "3 tbsp" },
-      { name: "Soy sauce", qty: "2 tbsp" },
-      { name: "Sugar", qty: "1 tsp" },
-      { name: "Onion, thinly sliced", qty: "½" },
-      { name: "Steamed Japanese rice", qty: "2 bowls" },
-      { name: "Mitsuba or green onion, chopped", qty: "2 tbsp" },
-    ],
-    steps: [
-      "Combine dashi, mirin, soy sauce and sugar in a small pan. Bring to a simmer.",
-      "Add onion slices, cook 2 minutes until translucent.",
-      "Add chicken pieces. Simmer over medium heat 5 minutes until cooked through.",
-      "Beat eggs lightly — you want streaks of yolk and white, not fully mixed.",
-      "Pour eggs in a circular motion over the chicken. Cover, cook 1 minute until just set but still soft.",
-      "Slide gently over rice bowls. Scatter mitsuba or green onion on top."
-    ],
-    tip: "Stir the egg mixture only 3–4 times — keeping yolk and white separate gives that beautiful two-tone custard texture that defines great oyakodon."
-  },
-  {
-    name: "Japchae", desc: "Korean glass noodles stir-fried with spinach, mushrooms, carrot and beef in a savoury-sweet soy glaze.", emoji: "🍝", cats: ["asian","korean","healthy"], time: "25 min", cal: "430 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Dangmyeon (sweet potato glass noodles)", qty: "150 g" },
-      { name: "Beef sirloin, thinly sliced", qty: "150 g" },
-      { name: "Spinach, blanched and squeezed", qty: "100 g" },
-      { name: "Shiitake mushrooms, sliced", qty: "80 g" },
-      { name: "Carrot, julienned", qty: "1" },
-      { name: "Onion, sliced", qty: "½" },
-      { name: "Soy sauce", qty: "3 tbsp" },
-      { name: "Sesame oil", qty: "2 tbsp" },
-      { name: "Sugar", qty: "1 tbsp" },
-      { name: "Garlic cloves, minced", qty: "2" },
-      { name: "Sesame seeds", qty: "1 tsp" },
-    ],
-    steps: [
-      "Boil noodles 6–8 minutes until tender. Drain, rinse in cold water and cut into 15cm lengths. Toss with 1 tbsp sesame oil and 1 tbsp soy sauce.",
-      "Marinate beef in 1 tbsp soy sauce, 1 tsp sesame oil, garlic and ½ tsp sugar for 10 minutes.",
-      "Stir-fry each vegetable separately in a lightly oiled pan. Set aside.",
-      "Stir-fry beef 2 minutes until cooked. Add remaining soy sauce and sugar.",
-      "Combine noodles, all vegetables and beef in a large bowl. Toss with remaining sesame oil. Taste and adjust seasoning.",
-      "Serve at room temperature, scattered with sesame seeds."
-    ],
-    tip: "Cooking each component separately before combining is the key to japchae — it preserves each ingredient's colour and texture rather than everything going grey and mushy."
-  },
-  {
-    name: "Khao Man Gai", desc: "Poached chicken over rice cooked in chicken fat, with a punchy ginger-garlic dipping sauce and clear broth.", emoji: "🍗", cats: ["asian","thai","healthy"], time: "30 min", cal: "490 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Chicken thighs or breasts, bone-in", qty: "2" },
-      { name: "Jasmine rice, rinsed", qty: "200 g" },
-      { name: "Garlic cloves", qty: "6" },
-      { name: "Fresh ginger, sliced", qty: "30 g" },
-      { name: "Fermented soybean paste (tao jiew)", qty: "2 tbsp" },
-      { name: "Soy sauce", qty: "1 tbsp" },
-      { name: "Fresh ginger, minced (for sauce)", qty: "1 tbsp" },
-      { name: "Garlic, minced (for sauce)", qty: "2 cloves" },
-      { name: "Lime juice", qty: "1 tbsp" },
-      { name: "Sugar", qty: "1 tsp" },
-      { name: "Cucumber, sliced", qty: "½" },
-      { name: "Fresh cilantro", qty: "handful" },
-    ],
-    steps: [
-      "Bring 1 litre of water to a boil with ginger slices and 3 garlic cloves. Add chicken. Reduce to a gentle simmer and poach 15–18 minutes until cooked through. Remove chicken and reserve broth.",
-      "Skim 2 tbsp chicken fat from the broth. Heat in a saucepan and fry remaining garlic until golden. Add rice and stir to coat.",
-      "Add 400ml of the reserved broth. Cook rice covered over low heat until absorbed, about 15 minutes.",
-      "Make dipping sauce: blend soybean paste, minced ginger, minced garlic, soy sauce, lime juice and sugar together.",
-      "Slice chicken. Serve over rice with cucumber, dipping sauce on the side and a small bowl of warm broth topped with cilantro."
-    ],
-    tip: "The entire flavour comes from cooking the rice in the chicken fat and broth — don't substitute with water or the dish loses its soul."
-  },
-  {
-    name: "Kung Pao Chicken", desc: "Wok-fried chicken with dried chillies, Sichuan pepper, peanuts and a glossy, tangy-sweet sauce.", emoji: "🌶️", cats: ["asian","chinese","quick","comfort"], time: "15 min", cal: "480 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Chicken breast, diced 2cm", qty: "300 g" },
-      { name: "Roasted peanuts", qty: "60 g" },
-      { name: "Dried red chillies, halved", qty: "6" },
-      { name: "Sichuan peppercorns", qty: "½ tsp" },
-      { name: "Garlic cloves, minced", qty: "3" },
-      { name: "Fresh ginger, minced", qty: "1 tsp" },
-      { name: "Soy sauce", qty: "2 tbsp" },
-      { name: "Chinkiang vinegar", qty: "1 tbsp" },
-      { name: "Sugar", qty: "1 tbsp" },
-      { name: "Cornstarch", qty: "2 tsp" },
-      { name: "Sesame oil & neutral oil", qty: "1 tbsp each" },
-      { name: "Spring onions, sliced", qty: "3 stalks" },
-    ],
-    steps: [
-      "Marinate chicken with 1 tbsp soy sauce and 1 tsp cornstarch for 10 minutes.",
-      "Mix sauce: remaining soy sauce, vinegar, sugar, 1 tsp cornstarch and 2 tbsp water.",
-      "Heat wok until smoking. Add oil, then dried chillies and Sichuan peppercorns. Stir-fry 30 seconds until fragrant.",
-      "Add chicken. Stir-fry over high heat 3 minutes until golden.",
-      "Add garlic and ginger. Toss 30 seconds. Pour in sauce — it should bubble and thicken immediately.",
-      "Add peanuts and spring onions. Toss, drizzle with sesame oil and serve immediately with steamed rice."
-    ],
-    tip: "The chillies are for flavour, not eating — the longer they stay in the oil, the more heat they release. Remove before serving if you want less spice."
-  },
-  {
-    name: "Goi Cuon (Vietnamese Fresh Rolls)", desc: "Translucent rice paper rolls filled with shrimp, rice vermicelli, herbs and lettuce with peanut dipping sauce.", emoji: "🫔", cats: ["asian","vietnamese","healthy","quick"], time: "20 min", cal: "280 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Rice paper wrappers (22cm)", qty: "8" },
-      { name: "Cooked shrimp, halved lengthwise", qty: "16" },
-      { name: "Rice vermicelli, cooked and cooled", qty: "100 g" },
-      { name: "Butter lettuce leaves", qty: "8" },
-      { name: "Fresh mint leaves", qty: "large handful" },
-      { name: "Fresh Thai basil", qty: "large handful" },
-      { name: "Cucumber, julienned", qty: "½" },
-      { name: "Carrot, julienned", qty: "1" },
-      { name: "Hoisin sauce", qty: "3 tbsp" },
-      { name: "Peanut butter", qty: "1 tbsp" },
-      { name: "Lime juice", qty: "1 tbsp" },
-    ],
-    steps: [
-      "Make dipping sauce: mix hoisin sauce, peanut butter, lime juice and 2 tbsp warm water until smooth.",
-      "Prepare all fillings and lay out in separate piles for easy assembly.",
-      "Fill a large shallow dish with warm water. Dip one rice paper wrapper for 10–15 seconds until just pliable (it will continue to soften).",
-      "Lay on a damp board. Place 2 shrimp halves (pink side down) in a row across the lower third. Add lettuce, vermicelli, herbs, cucumber and carrot.",
-      "Fold up the bottom, fold in the sides and roll tightly. The wrapper will seal itself.",
-      "Serve immediately with peanut dipping sauce."
-    ],
-    tip: "Dip the rice paper for less time than you think — 10 seconds feels too soon, but it will soften fully as you roll. Over-soaking makes it tear."
-  },
-  {
-    name: "Cacio e Pepe", desc: "Rome's simplest pasta — just tonnarelli, aged Pecorino, Parmesan and a ridiculous amount of black pepper.", emoji: "🍝", cats: ["western","italian","quick","vegetarian","comfort"], time: "15 min", cal: "580 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Spaghetti or tonnarelli", qty: "200 g" },
-      { name: "Pecorino Romano, finely grated", qty: "80 g" },
-      { name: "Parmesan, finely grated", qty: "30 g" },
-      { name: "Whole black peppercorns, coarsely cracked", qty: "2 tsp" },
-      { name: "Salt (for pasta water)", qty: "to taste" },
-    ],
-    steps: [
-      "Toast cracked peppercorns in a dry skillet over medium heat 1 minute until fragrant. Set aside.",
-      "Cook pasta in generously salted boiling water until just shy of al dente. Reserve 1 cup pasta water.",
-      "Add toasted pepper to the skillet with ¼ cup pasta water. Simmer 30 seconds.",
-      "Add drained pasta and toss vigorously to coat. Remove pan from heat.",
-      "Gradually add both cheeses, tossing constantly and adding pasta water little by little to form a creamy, emulsified sauce — not grainy, not dry.",
-      "Serve immediately with extra pepper grated on top."
-    ],
-    tip: "Grate the cheese on the finest setting possible and add it off heat — medium heat and fine-grated cheese emulsify smoothly; coarse cheese over heat clumps into a stringy mess."
-  },
-  {
-    name: "Pasta e Ceci", desc: "Thick Italian soup of small pasta tubes and chickpeas in a garlicky, rosemary-scented tomato broth.", emoji: "🫘", cats: ["western","italian","vegetarian","comfort","healthy"], time: "30 min", cal: "430 kcal",
+    name: "懒人版恰巴塔面包",
+    desc: "免揉意式恰巴塔，波兰种低温发酵，外皮金黄酥脆，内里充满大气孔，超有成就感。",
+    emoji: "🍞", cats: ["western","italian","comfort"], time: "8 hr", cal: "320 kcal",
     serves: 4,
     ingredients: [
-      { name: "Canned chickpeas, drained", qty: "2 × 400 g" },
-      { name: "Ditalini or small pasta", qty: "150 g" },
-      { name: "Canned whole tomatoes", qty: "200 g" },
-      { name: "Garlic cloves, minced", qty: "4" },
-      { name: "Fresh rosemary", qty: "2 sprigs" },
-      { name: "Anchovy fillet (optional)", qty: "1" },
-      { name: "Olive oil", qty: "4 tbsp" },
-      { name: "Vegetable stock", qty: "600 ml" },
-      { name: "Parmesan rind (optional)", qty: "1 piece" },
-      { name: "Salt, pepper & chilli flakes", qty: "to taste" },
+      { name: "面粉", qty: "400 g" },
+      { name: "水", qty: "360 ml" },
+      { name: "干酵母", qty: "2 g" },
+      { name: "盐", qty: "6 g" },
+      { name: "橄榄油", qty: "1大勺" },
     ],
     steps: [
-      "Heat olive oil in a large pot. Fry garlic, rosemary and anchovy (if using) over medium heat 2 minutes.",
-      "Add tomatoes, crushing them. Cook 5 minutes.",
-      "Add chickpeas and stock. Simmer 10 minutes. Remove rosemary.",
-      "Use a hand blender to purée about one-third of the soup in the pot — this creates the creamy base while keeping texture.",
-      "Add pasta and cook until al dente, 8–10 minutes. The soup should be thick, not brothy.",
-      "Serve with a generous pour of olive oil and black pepper."
+      "制作波兰种：从400g面粉中取100g，搭配100ml水、1g干酵母混合，冷藏发酵12–24小时。",
+      "主面团水合：剩余300g面粉加225g水（预留35g后水），混合后冷藏水合2小时。",
+      "揉面与加后水：将水合面团、波兰种、剩余酵母、盐混合，低速搅拌，分3次加入35g后水，充分吸收后加橄榄油，打至不沾盆壁。",
+      "一次发酵：室温发酵，每半小时折叠一次，发至两倍大。",
+      "分割整形：面团表面撒干粉，倒出后切成4等份，轻手对折三折，整形为椭圆形。",
+      "二次发酵后烘烤：待面团明显长大，放入预热至230℃烤箱下层，烤15分钟至表面金黄。",
     ],
-    tip: "Adding a Parmesan rind to the broth while it simmers adds enormous depth — save your rinds in the freezer for exactly this purpose."
+    tip: "面团温度不要超过25℃，否则会影响气孔结构。预热烤盘并制造蒸汽（放湿毛巾）是外皮酥脆的关键。"
   },
   {
-    name: "Spaghetti Puttanesca", desc: "Punchy Neapolitan pasta with olives, anchovies, capers, garlic and crushed tomatoes. Ready in 20 minutes.", emoji: "🍝", cats: ["western","italian","quick","comfort"], time: "20 min", cal: "520 kcal",
+    name: "清爽低脂墨西哥Taco",
+    desc: "全麦饼皮烤至酥脆，填入牛肉末内馅，配自制沙沙酱与牛油果酱，清爽低脂又满足。",
+    emoji: "🌮", cats: ["western","mexican","healthy"], time: "30 min", cal: "390 kcal",
     serves: 2,
     ingredients: [
-      { name: "Spaghetti", qty: "200 g" },
-      { name: "Canned chopped tomatoes", qty: "400 g" },
-      { name: "Anchovy fillets in oil", qty: "5" },
-      { name: "Kalamata olives, pitted", qty: "60 g" },
-      { name: "Capers, rinsed", qty: "2 tbsp" },
-      { name: "Garlic cloves, thinly sliced", qty: "3" },
-      { name: "Chilli flakes", qty: "½ tsp" },
-      { name: "Olive oil", qty: "3 tbsp" },
-      { name: "Fresh parsley, chopped", qty: "handful" },
+      { name: "全麦饼（或玉米饼）", qty: "4张" },
+      { name: "牛肉末", qty: "200 g" },
+      { name: "红洋葱", qty: "1个" },
+      { name: "番茄", qty: "2个" },
+      { name: "彩椒", qty: "1个" },
+      { name: "牛油果", qty: "1个" },
+      { name: "香菜、蒜末", qty: "适量" },
+      { name: "酸奶", qty: "2大勺" },
+      { name: "柠檬汁、橄榄油", qty: "适量" },
+      { name: "老抽、黑胡椒、盐", qty: "适量" },
     ],
     steps: [
-      "Cook spaghetti in well-salted boiling water until al dente. Reserve ½ cup pasta water.",
-      "Heat olive oil in a wide pan. Add anchovies and press them until they dissolve into the oil, about 1 minute.",
-      "Add garlic and chilli flakes. Cook 1 minute until fragrant but not coloured.",
-      "Add tomatoes. Simmer 10 minutes until slightly reduced. Add olives and capers.",
-      "Add drained pasta, toss with a splash of pasta water.",
-      "Scatter parsley on top. No cheese needed — the anchovies provide all the salt and depth."
+      "制作沙沙酱：红洋葱丁、番茄丁、彩椒丁、香菜碎、蒜末混合，加黑胡椒、盐、橄榄油、柠檬汁拌匀。",
+      "制作牛油果酱：牛油果捣碎，加番茄丁、红洋葱丁、酸奶、香菜碎、黑胡椒、盐、橄榄油拌匀。",
+      "制作饼皮：用碗扣在全麦饼上切出圆形，放烤网上对折，180℃烤3–5分钟至酥脆。",
+      "制作内馅：牛肉末炒至变色，加洋葱丁、芹菜碎炒香，加老抽、黑胡椒、盐调味。",
+      "组装Taco：在酥脆饼皮中填入牛肉馅，分别铺上沙沙酱和牛油果酱即可。",
     ],
-    tip: "Don't add salt before tasting — anchovies, olives and capers are all very salty. The pasta cooking water is likely all the extra seasoning you need."
+    tip: "饼皮对折后放烤网烤，受热均匀才能定型，形成漂亮的U形不塌陷。"
   },
   {
-    name: "Chicken Shawarma Bowl", desc: "Spiced roasted chicken with turmeric rice, garlic sauce, pickled red cabbage and flatbread crisps.", emoji: "🫔", cats: ["middleeastern","healthy","western"], time: "30 min", cal: "560 kcal",
+    name: "西班牙蒜香虾 Tapas",
+    desc: "黑虎虾以虾头煎出的虾油爆香大蒜辣椒，配口蘑小番茄西兰花，搭配法棍蘸汁，风味浓郁。",
+    emoji: "🦐", cats: ["mediterranean","western","comfort"], time: "30 min", cal: "420 kcal",
     serves: 2,
     ingredients: [
-      { name: "Chicken thighs, boneless", qty: "400 g" },
-      { name: "Basmati rice", qty: "200 g" },
-      { name: "Turmeric", qty: "½ tsp" },
-      { name: "Cumin", qty: "1 tsp" },
-      { name: "Smoked paprika", qty: "1 tsp" },
-      { name: "Cinnamon", qty: "¼ tsp" },
-      { name: "Garlic cloves, minced", qty: "4" },
-      { name: "Lemon juice", qty: "2 tbsp" },
-      { name: "Olive oil", qty: "3 tbsp" },
-      { name: "Greek yoghurt", qty: "100 g" },
-      { name: "Red cabbage, finely shredded", qty: "150 g" },
-      { name: "Red wine vinegar", qty: "1 tbsp" },
+      { name: "黑虎虾", qty: "300 g" },
+      { name: "大蒜", qty: "1头" },
+      { name: "干辣椒", qty: "3根" },
+      { name: "口蘑", qty: "100 g" },
+      { name: "小番茄", qty: "100 g" },
+      { name: "西兰花", qty: "100 g" },
+      { name: "白葡萄酒", qty: "50 ml" },
+      { name: "橄榄油", qty: "大量" },
+      { name: "柠檬、欧芹碎、干奶酪", qty: "适量" },
+      { name: "黑胡椒、海盐、甜椒粉", qty: "适量" },
+      { name: "法棍", qty: "1根" },
     ],
     steps: [
-      "Marinate chicken: combine cumin, paprika, cinnamon, half the garlic, lemon juice and 2 tbsp olive oil. Coat chicken and marinate 20 minutes.",
-      "Pickle cabbage: toss with red wine vinegar, a pinch of salt and sugar. Set aside.",
-      "Make garlic sauce: mix yoghurt with remaining garlic, a squeeze of lemon and salt.",
-      "Cook rice with turmeric added to the water.",
-      "Roast chicken at 220°C / 425°F for 20 minutes, or pan-fry over high heat 6 minutes per side until charred. Rest and slice.",
-      "Assemble bowls: turmeric rice, sliced chicken, pickled cabbage. Drizzle garlic sauce over the top."
+      "处理虾：保留虾头，去虾皮留虾尾，开背去虾线。撒黑胡椒、海盐、甜椒粉腌制20分钟。",
+      "煎虾油：锅中倒入大量橄榄油，放虾头小火煎出虾油，捞出虾头。",
+      "炒香料：放入干辣椒段、大量蒜片，煎至蒜片变色。",
+      "煎制食材：倒入腌好的虾、口蘑、小番茄、西兰花，煎至食材快熟。",
+      "调味焖制：加黑胡椒、海盐、甜椒粉、白葡萄酒、柠檬汁，焖煮1–2分钟。",
+      "装盘：撒欧芹碎、干奶酪碎，搭配法棍蘸汁享用。",
     ],
-    tip: "The pickled cabbage is not optional — its sharp crunch cuts through the richness of the chicken and garlic sauce and makes the whole bowl work."
+    tip: "虾头里的虾膏是整道菜的精华，一定要小火慢煎把虾油全部逼出来，这就是蒜香虾的灵魂。"
   },
   {
-    name: "Fattoush Salad", desc: "Levantine salad of toasted pita chips, cucumber, tomato and radish with a tangy sumac-lemon dressing.", emoji: "🥗", cats: ["middleeastern","mediterranean","healthy","quick","vegetarian"], time: "12 min", cal: "290 kcal",
+    name: "地狱排骨",
+    desc: "排骨以多种酱料腌制入味，与土豆玉米香菇同炖，红亮浓郁，软烂脱骨，下饭一绝。",
+    emoji: "🍖", cats: ["chinese","comfort"], time: "60 min", cal: "620 kcal",
+    serves: 3,
+    ingredients: [
+      { name: "排骨", qty: "500 g" },
+      { name: "面粉", qty: "1勺" },
+      { name: "生抽", qty: "2勺" },
+      { name: "料酒", qty: "2勺" },
+      { name: "老抽", qty: "1勺" },
+      { name: "番茄酱", qty: "2勺" },
+      { name: "蚝油", qty: "1勺" },
+      { name: "甜面酱", qty: "2勺" },
+      { name: "豆瓣酱", qty: "1勺" },
+      { name: "淀粉", qty: "1勺" },
+      { name: "土豆、玉米、香菇", qty: "各适量" },
+      { name: "白糖", qty: "2勺" },
+      { name: "葱姜蒜、红辣椒、芝麻", qty: "适量" },
+    ],
+    steps: [
+      "处理排骨：排骨分块，加1勺面粉抓匀后用清水洗净，吸干水分。",
+      "腌制排骨：加生抽、料酒、老抽、番茄酱、胡椒粉、蚝油、甜面酱、淀粉，抓拌均匀腌制20分钟。",
+      "准备配菜：土豆切块，玉米切段，香菇洗净备用。",
+      "煎制排骨：锅中倒油，放入排骨煎至两面变色，加入葱姜蒜翻炒，再加豆瓣酱、白糖翻炒均匀。",
+      "炖煮：加入没过排骨的开水，倒入土豆、玉米、香菇，大火煮开后小火焖煮40分钟。",
+      "装盘：撒上红辣椒、小葱、芝麻即可。",
+    ],
+    tip: "用面粉抓洗排骨能有效去腥去杂质，比焯水更能保留排骨的鲜味。焖煮时保持小火，让骨髓的胶质慢慢融入汤汁。"
+  },
+  {
+    name: "广式啫啫煲排骨",
+    desc: "砂煲猛火逼出镬气，排骨腌制入味后煎至金黄，淋酒焗焖，葱香扑鼻，经典广式煲仔风味。",
+    emoji: "🥘", cats: ["chinese","comfort"], time: "30 min", cal: "520 kcal",
     serves: 2,
     ingredients: [
-      { name: "Stale pita breads", qty: "2" },
-      { name: "Romaine lettuce, torn", qty: "½ head" },
-      { name: "Cherry tomatoes, halved", qty: "150 g" },
-      { name: "Cucumber, diced", qty: "1" },
-      { name: "Radishes, sliced", qty: "5" },
-      { name: "Fresh mint and parsley", qty: "large handful" },
-      { name: "Sumac", qty: "1 tsp" },
-      { name: "Lemon juice", qty: "3 tbsp" },
-      { name: "Olive oil", qty: "3 tbsp" },
-      { name: "Garlic clove, minced", qty: "1" },
-      { name: "Salt & pepper", qty: "to taste" },
+      { name: "排骨", qty: "500 g" },
+      { name: "生抽", qty: "4勺" },
+      { name: "蚝油", qty: "1勺" },
+      { name: "老抽", qty: "1勺" },
+      { name: "料酒", qty: "2勺" },
+      { name: "淀粉", qty: "2勺" },
+      { name: "食用油", qty: "2勺" },
+      { name: "蒜粒、姜粒", qty: "适量" },
+      { name: "葱段、香菜、红辣椒", qty: "适量" },
     ],
     steps: [
-      "Tear pita into rough pieces and toast in a 200°C oven for 8 minutes until completely crisp, or fry in olive oil. Season with salt.",
-      "Whisk lemon juice, olive oil, garlic, sumac and salt into a dressing.",
-      "Combine lettuce, tomatoes, cucumber, radishes, mint and parsley in a bowl.",
-      "Toss salad with most of the dressing.",
-      "Add toasted pita pieces and toss once more. Serve immediately so the chips stay crunchy.",
-      "Finish with extra sumac dusted over the top."
+      "擦干腌透：排骨表面水分彻底擦干，加生抽、蚝油、老抽、料酒、淀粉搅拌均匀，加一点油锁味。",
+      "猛火煎香：锅中倒油，将排骨铺开，猛火煎至金黄。",
+      "入砂煲焗焖：将煎好的排骨放入砂煲，盖盖后淋两圈料酒增香，焖煮5–6分钟。",
+      "增加风味：开盖加入葱段、香菜、红辣椒等配料翻炒均匀即可。",
     ],
-    tip: "The pita must go in at the last second — even 5 minutes after dressing and the chips turn soggy. Make fattoush to eat immediately."
+    tip: "啫啫煲的精髓在于猛火和砂煲的蓄热，排骨表面水分一定要擦干，猛火才能逼出镬气香味。"
   },
   {
-    name: "Ful Medames", desc: "Egyptian slow-cooked fava beans with cumin, garlic, lemon and olive oil. A hearty, earthy vegetarian staple.", emoji: "🫘", cats: ["middleeastern","vegetarian","healthy","quick"], time: "15 min", cal: "340 kcal",
+    name: "盐葱牛肋条",
+    desc: "牛肋条腌制煎至焦香，配炒口蘑，淋上大量自制盐葱酱，咸鲜葱香层层叠加，简单到封神。",
+    emoji: "🥩", cats: ["chinese","healthy","comfort"], time: "40 min", cal: "480 kcal",
     serves: 2,
     ingredients: [
-      { name: "Canned fava beans (ful), drained", qty: "2 × 400 g" },
-      { name: "Garlic cloves, minced", qty: "3" },
-      { name: "Lemon juice", qty: "3 tbsp" },
-      { name: "Extra-virgin olive oil", qty: "4 tbsp" },
-      { name: "Ground cumin", qty: "1 tsp" },
-      { name: "Chilli flakes", qty: "¼ tsp" },
-      { name: "Fresh parsley, chopped", qty: "handful" },
-      { name: "Tomato, diced", qty: "1" },
-      { name: "Hard-boiled eggs", qty: "2" },
-      { name: "Warm pita bread", qty: "2" },
+      { name: "牛肋条", qty: "300 g" },
+      { name: "口蘑", qty: "100 g" },
+      { name: "姜片、大量蒜片", qty: "适量" },
+      { name: "生抽、蚝油", qty: "各1勺" },
+      { name: "黑胡椒", qty: "适量" },
+      { name: "大量葱花", qty: "3–4根" },
+      { name: "蒜末", qty: "2瓣" },
+      { name: "芝麻", qty: "1勺" },
+      { name: "牛油果油或橄榄油", qty: "适量" },
+      { name: "盐", qty: "少许" },
     ],
     steps: [
-      "Warm beans in a saucepan with a splash of water over medium heat, 5 minutes.",
-      "Mash roughly with a fork — leaving about half the beans whole.",
-      "Stir in garlic, lemon juice, cumin and chilli flakes. Simmer 3 minutes.",
-      "Transfer to plates. Drizzle generously with olive oil.",
-      "Top with diced tomato and fresh parsley. Halve the hard-boiled eggs and arrange alongside.",
-      "Serve with warm pita for scooping."
+      "腌肉：牛肋条切块，放姜片、生抽、蚝油、黑胡椒、食用油抓匀，腌20–30分钟。",
+      "制盐葱酱：大量葱花＋蒜末＋芝麻＋黑胡椒＋少许盐＋牛油果油，疯狂拌匀备用。",
+      "煎/烤牛肉：锅里放油煎至焦香，或空气炸锅200°C烤25分钟。",
+      "炒口蘑：锅底炒香蒜片，放入口蘑炒熟。",
+      "合炒出锅：倒入煎好的牛肉，来两勺盐葱酱翻炒出锅。",
+      "最后把剩余盐葱酱铺在牛肉上，拌开享用。",
     ],
-    tip: "Use the best olive oil you have — it goes on at the end and is very much part of the flavour, not just a garnish."
-  },
-  {
-    name: "Tabbouleh Bowl", desc: "Fine bulgur wheat with mountains of flat-leaf parsley, mint, tomato, and a bright lemon-olive oil dressing.", emoji: "🌿", cats: ["middleeastern","mediterranean","vegetarian","healthy","quick"], time: "15 min", cal: "310 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Fine bulgur wheat", qty: "60 g" },
-      { name: "Flat-leaf parsley, finely chopped", qty: "large bunch (80g)" },
-      { name: "Fresh mint, finely chopped", qty: "small bunch (20g)" },
-      { name: "Ripe tomatoes, deseeded and finely diced", qty: "2" },
-      { name: "Spring onions, finely sliced", qty: "3" },
-      { name: "Lemon juice", qty: "4 tbsp" },
-      { name: "Extra-virgin olive oil", qty: "4 tbsp" },
-      { name: "Salt", qty: "to taste" },
-    ],
-    steps: [
-      "Pour boiling water over bulgur (just enough to cover). Cover and leave 10 minutes. Drain any excess and cool.",
-      "Meanwhile, finely chop all the herbs — this is most of the work and most of the dish.",
-      "Combine bulgur, parsley, mint, tomatoes and spring onions.",
-      "Dress with lemon juice and olive oil. Season generously with salt.",
-      "Toss well. Taste — it should be bright, acidic and intensely herby.",
-      "Rest 10 minutes before serving for flavours to meld."
-    ],
-    tip: "Real tabbouleh is primarily herbs, not grain. The bulgur is almost a garnish. If your bowl looks more green than beige, you've got it right."
-  },
-  {
-    name: "Doenjang Jjigae", desc: "Korean fermented soybean paste stew with tofu, zucchini, mushrooms and potato in an anchovy broth.", emoji: "🥘", cats: ["asian","korean","comfort","vegetarian"], time: "20 min", cal: "280 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Firm tofu, cubed", qty: "200 g" },
-      { name: "Doenjang (Korean fermented soybean paste)", qty: "2 tbsp" },
-      { name: "Zucchini, sliced into half-moons", qty: "1" },
-      { name: "Mushrooms (shiitake or enoki)", qty: "80 g" },
-      { name: "Potato, cubed", qty: "1 small" },
-      { name: "Onion, diced", qty: "½" },
-      { name: "Garlic cloves, minced", qty: "2" },
-      { name: "Anchovy stock or vegetable stock", qty: "500 ml" },
-      { name: "Gochugaru (optional)", qty: "½ tsp" },
-      { name: "Sesame oil", qty: "1 tsp" },
-      { name: "Steamed rice (to serve)", qty: "2 bowls" },
-    ],
-    steps: [
-      "Bring stock to a simmer. Whisk in doenjang paste until fully dissolved.",
-      "Add potato and onion. Cook 5 minutes.",
-      "Add zucchini, mushrooms and garlic. Simmer 5 minutes.",
-      "Add tofu. Simmer gently 3 minutes — don't stir too vigorously or the tofu breaks.",
-      "Add gochugaru if using. Finish with sesame oil.",
-      "Serve bubbling in the pot alongside steamed rice — each spoonful of stew goes over the rice."
-    ],
-    tip: "Doenjang varies in saltiness — add the paste gradually and taste as you go. Store-bought broth can also vary; the final seasoning should happen at the table."
-  },
-  {
-    name: "Tteokbokki", desc: "Chewy Korean rice cakes in a fiery gochujang sauce with fish cakes and hard-boiled egg. Street food at its best.", emoji: "🌶️", cats: ["asian","korean","comfort","quick"], time: "15 min", cal: "430 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Tteok (cylinder rice cakes)", qty: "300 g" },
-      { name: "Fish cakes (eomuk), sliced", qty: "100 g" },
-      { name: "Gochujang (Korean chilli paste)", qty: "3 tbsp" },
-      { name: "Gochugaru (Korean chilli flakes)", qty: "1 tbsp" },
-      { name: "Soy sauce", qty: "1 tbsp" },
-      { name: "Sugar", qty: "1 tbsp" },
-      { name: "Garlic cloves, minced", qty: "2" },
-      { name: "Anchovy stock or water", qty: "400 ml" },
-      { name: "Hard-boiled eggs", qty: "2" },
-      { name: "Green onions, sliced", qty: "2 stalks" },
-    ],
-    steps: [
-      "If using refrigerated rice cakes, soak in warm water 10 minutes to soften.",
-      "Bring stock to a boil with gochujang, gochugaru, soy sauce, sugar and garlic. Stir until paste is dissolved.",
-      "Add rice cakes and fish cakes. Cook over medium-high heat, stirring frequently, 8–10 minutes until sauce thickens and coats the rice cakes.",
-      "Add peeled hard-boiled eggs for the last 2 minutes.",
-      "Scatter green onions on top and serve directly from the pan."
-    ],
-    tip: "The sauce reduces quickly — keep stirring and add splashes of water if it threatens to catch. The sticky, thickened sauce clinging to each rice cake is exactly what you want."
-  },
-  {
-    name: "Congee", desc: "Silky Chinese rice porridge cooked until the grains dissolve into a creamy, comforting broth. Top as you like.", emoji: "🍚", cats: ["asian","chinese","healthy","comfort"], time: "30 min", cal: "310 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Jasmine rice", qty: "100 g" },
-      { name: "Chicken or vegetable stock", qty: "1.2 litres" },
-      { name: "Fresh ginger, sliced", qty: "20 g" },
-      { name: "Soy sauce", qty: "1 tbsp" },
-      { name: "Sesame oil", qty: "1 tsp" },
-      { name: "Soft-boiled egg or century egg", qty: "2" },
-      { name: "Green onions, sliced", qty: "2 stalks" },
-      { name: "Fried shallots", qty: "2 tbsp" },
-      { name: "White pepper", qty: "pinch" },
-      { name: "Ginger, julienned (for topping)", qty: "1 tbsp" },
-    ],
-    steps: [
-      "Rinse rice. For faster cooking, freeze the washed rice for 1 hour first.",
-      "Bring stock to a boil with ginger slices. Add rice.",
-      "Cook over medium heat 25–30 minutes, stirring occasionally, until rice breaks down into a thick porridge. Add more stock or water if needed.",
-      "Season with soy sauce, sesame oil and white pepper. Remove ginger slices.",
-      "Ladle into bowls. Top with egg, green onions, fried shallots and julienned ginger.",
-      "Serve with chilli oil and soy sauce on the side for everyone to adjust."
-    ],
-    tip: "The ratio of rice to liquid is roughly 1:10–12 for true silky congee. It should be much more liquidy than you expect at the start — it thickens dramatically as it cooks."
-  },
-  {
-    name: "Yakisoba", desc: "Japanese wok-fried noodles with pork, cabbage and carrot in a tangy Worcestershire-based sauce.", emoji: "🍜", cats: ["asian","japanese","quick","comfort"], time: "15 min", cal: "490 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Yakisoba noodles (fresh or pre-steamed)", qty: "300 g" },
-      { name: "Pork belly or shoulder, thinly sliced", qty: "150 g" },
-      { name: "Cabbage, roughly chopped", qty: "150 g" },
-      { name: "Carrot, julienned", qty: "1" },
-      { name: "Onion, sliced", qty: "½" },
-      { name: "Yakisoba sauce (or: 2 tbsp Worcestershire, 1 tbsp soy, 1 tbsp ketchup, 1 tsp oyster sauce)", qty: "3 tbsp" },
-      { name: "Neutral oil", qty: "2 tbsp" },
-      { name: "Aonori (dried seaweed flakes)", qty: "1 tsp" },
-      { name: "Beni shoga (red pickled ginger)", qty: "to serve" },
-    ],
-    steps: [
-      "Loosen noodles by hand or briefly microwave 1 minute to separate.",
-      "Heat oil in a wok or griddle over high heat. Add pork and cook until browned, 2 minutes.",
-      "Add onion, carrot and cabbage. Stir-fry 3 minutes until slightly softened.",
-      "Add noodles and toss everything together vigorously.",
-      "Pour yakisoba sauce over everything. Toss until noodles are fully coated and caramelised in spots.",
-      "Plate and top with aonori and a mound of beni shoga."
-    ],
-    tip: "A teppan (flat iron griddle) gives yakisoba its proper caramelised, smoky edge — if you have a cast-iron pan, heat it for 5 minutes before cooking for the closest result."
-  },
-  {
-    name: "Soba Noodle Salad", desc: "Cold buckwheat soba with edamame, cucumber and sesame in a ponzu-ginger dressing. Light and refreshing.", emoji: "🥢", cats: ["asian","japanese","healthy","quick","vegetarian"], time: "12 min", cal: "350 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Soba noodles (dried)", qty: "180 g" },
-      { name: "Edamame (shelled, frozen)", qty: "100 g" },
-      { name: "Cucumber, julienned", qty: "1" },
-      { name: "Radishes, thinly sliced", qty: "4" },
-      { name: "Nori, shredded", qty: "1 sheet" },
-      { name: "Ponzu sauce", qty: "3 tbsp" },
-      { name: "Sesame oil", qty: "1 tbsp" },
-      { name: "Rice vinegar", qty: "1 tbsp" },
-      { name: "Fresh ginger, grated", qty: "1 tsp" },
-      { name: "Sesame seeds", qty: "1 tbsp" },
-      { name: "Toasted white sesame oil", qty: "1 tsp" },
-    ],
-    steps: [
-      "Cook soba in boiling unsalted water 4–5 minutes. Drain and rinse thoroughly under cold running water until the water runs clear.",
-      "Cook frozen edamame per package and cool under cold water.",
-      "Whisk ponzu, sesame oil, rice vinegar and ginger into a dressing.",
-      "Toss cold soba with dressing. Add edamame, cucumber and radish.",
-      "Plate and top with shredded nori and sesame seeds.",
-      "Serve immediately or chill up to 1 hour (add more dressing before serving if it's been sitting)."
-    ],
-    tip: "Rinsing soba thoroughly after cooking is not optional — it removes the surface starch that causes the noodles to clump and turns them glossy and springy."
-  },
-  {
-    name: "Enchiladas Rojas", desc: "Corn tortillas filled with shredded chicken, rolled and baked under a smoky ancho chilli sauce with cheese.", emoji: "🌮", cats: ["western","mexican","comfort"], time: "30 min", cal: "580 kcal",
-    serves: 4,
-    ingredients: [
-      { name: "Corn tortillas (15cm)", qty: "8" },
-      { name: "Cooked chicken breast, shredded", qty: "400 g" },
-      { name: "Ancho dried chillies", qty: "3" },
-      { name: "Canned tomatoes", qty: "400 g" },
-      { name: "Garlic cloves", qty: "3" },
-      { name: "Onion", qty: "1" },
-      { name: "Cumin", qty: "1 tsp" },
-      { name: "Chicken stock", qty: "200 ml" },
-      { name: "Cheddar or Oaxacan cheese, grated", qty: "200 g" },
-      { name: "Sour cream and cilantro", qty: "to serve" },
-    ],
-    steps: [
-      "Toast dried chillies in a dry pan 30 seconds. Soak in boiling water 10 minutes. Drain and deseed.",
-      "Blend chillies, tomatoes, half the onion, garlic and cumin with the stock until smooth. Season.",
-      "Simmer sauce in a pan 10 minutes. It should be a deep, brick-red colour.",
-      "Quickly dip each tortilla in warm sauce to soften. Fill with shredded chicken, roll tightly and place seam-side down in a baking dish.",
-      "Pour remaining sauce over the top. Scatter cheese generously.",
-      "Bake at 200°C / 390°F for 15 minutes until cheese is golden. Serve with sour cream and cilantro."
-    ],
-    tip: "Dipping the tortillas briefly in warm sauce before rolling softens them so they don't crack — and also means every bite has flavour all the way through."
-  },
-  {
-    name: "Cobb Salad", desc: "A classic American composed salad with grilled chicken, bacon, egg, avocado, blue cheese and ranch dressing.", emoji: "🥗", cats: ["western","healthy","american"], time: "20 min", cal: "520 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Chicken breast, grilled and sliced", qty: "2" },
-      { name: "Bacon rashers, cooked and chopped", qty: "4" },
-      { name: "Eggs, hard-boiled and halved", qty: "2" },
-      { name: "Avocado, sliced", qty: "1" },
-      { name: "Blue cheese, crumbled", qty: "60 g" },
-      { name: "Cherry tomatoes, halved", qty: "100 g" },
-      { name: "Romaine lettuce, chopped", qty: "1 head" },
-      { name: "Red wine vinegar", qty: "2 tbsp" },
-      { name: "Dijon mustard", qty: "1 tsp" },
-      { name: "Olive oil", qty: "4 tbsp" },
-      { name: "Salt & pepper", qty: "to taste" },
-    ],
-    steps: [
-      "Make vinaigrette: whisk red wine vinegar, Dijon, olive oil, salt and pepper.",
-      "Season and grill or pan-fry chicken 6 minutes per side. Rest and slice.",
-      "Arrange lettuce on a large platter. Lay ingredients in distinct rows: chicken, bacon, egg, avocado, blue cheese and tomatoes.",
-      "The Cobb is composed, not tossed — each ingredient in its own column.",
-      "Drizzle dressing over everything at the table.",
-      "Serve with extra dressing on the side."
-    ],
-    tip: "Serve it composed, not tossed — the visual is half the point of a Cobb. Let each diner drag their fork through the rows and create their own combination."
-  },
-  {
-    name: "Buffalo Chicken Rice Bowl", desc: "Crispy buffalo-sauced chicken over white rice with celery, blue cheese crumbles and cooling ranch drizzle.", emoji: "🍗", cats: ["western","american","comfort","healthy"], time: "20 min", cal: "550 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Chicken breast, cubed", qty: "300 g" },
-      { name: "Hot sauce (Frank's RedHot or similar)", qty: "4 tbsp" },
-      { name: "Butter", qty: "2 tbsp" },
-      { name: "Garlic powder", qty: "½ tsp" },
-      { name: "Steamed white rice", qty: "2 bowls" },
-      { name: "Celery stalks, sliced", qty: "2" },
-      { name: "Blue cheese, crumbled", qty: "40 g" },
-      { name: "Ranch dressing", qty: "3 tbsp" },
-      { name: "Cornstarch", qty: "1 tbsp" },
-      { name: "Spring onions, sliced", qty: "2 stalks" },
-    ],
-    steps: [
-      "Toss chicken cubes in cornstarch and garlic powder. Pan-fry in oil over medium-high heat 5–6 minutes until golden and cooked through.",
-      "Melt butter in a small pan. Add hot sauce and stir to combine into buffalo sauce.",
-      "Toss crispy chicken in the buffalo sauce to coat completely.",
-      "Spoon rice into bowls. Pile sauced chicken on top.",
-      "Add celery, blue cheese crumbles and a generous drizzle of ranch.",
-      "Scatter spring onions and serve immediately."
-    ],
-    tip: "The cornstarch coating is key — it gives the chicken a light crispy shell that holds the buffalo sauce rather than letting it soak in and go soggy."
-  },
-  {
-    name: "Massaman Curry", desc: "Mild, fragrant Thai curry with tender potato, chicken and roasted peanuts in a coconut-spiced broth.", emoji: "🥘", cats: ["asian","thai","comfort"], time: "30 min", cal: "560 kcal",
-    serves: 4,
-    ingredients: [
-      { name: "Chicken thighs, bite-sized", qty: "600 g" },
-      { name: "Massaman curry paste", qty: "3 tbsp" },
-      { name: "Coconut milk (full fat)", qty: "400 ml" },
-      { name: "Potatoes, cubed 3cm", qty: "2 medium" },
-      { name: "Onion, cut into wedges", qty: "1" },
-      { name: "Roasted peanuts", qty: "60 g" },
-      { name: "Fish sauce", qty: "1 tbsp" },
-      { name: "Palm or brown sugar", qty: "1 tbsp" },
-      { name: "Tamarind paste", qty: "1 tbsp" },
-      { name: "Bay leaves", qty: "2" },
-      { name: "Steamed jasmine rice", qty: "to serve" },
-    ],
-    steps: [
-      "Fry curry paste in 2 tbsp coconut milk in a pot over medium heat for 2 minutes until fragrant.",
-      "Add chicken and brown lightly, 3 minutes.",
-      "Pour in remaining coconut milk and 200ml water. Add potatoes, onion and bay leaves.",
-      "Simmer 20 minutes until potatoes are completely tender and chicken is cooked.",
-      "Season with fish sauce, sugar and tamarind paste. Taste — it should be rich, mildly spiced, slightly sweet and sour.",
-      "Scatter roasted peanuts on top. Serve with jasmine rice."
-    ],
-    tip: "Massaman is the Thai curry that improves with time — make it a day ahead if you can. The potatoes absorb the coconut sauce overnight and become extraordinary."
-  },
-  {
-    name: "Larb Gai", desc: "Thai minced chicken salad with toasted rice powder, fish sauce, lime and fresh herbs. Eaten at room temperature.", emoji: "🌿", cats: ["asian","thai","healthy","quick"], time: "15 min", cal: "320 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Minced chicken", qty: "300 g" },
-      { name: "Shallots, thinly sliced", qty: "3" },
-      { name: "Fish sauce", qty: "2 tbsp" },
-      { name: "Lime juice", qty: "3 tbsp" },
-      { name: "Toasted rice powder (raw rice, toasted and ground)", qty: "2 tbsp" },
-      { name: "Dried chilli flakes", qty: "1 tsp" },
-      { name: "Fresh mint leaves", qty: "large handful" },
-      { name: "Cilantro leaves", qty: "large handful" },
-      { name: "Lemongrass, finely sliced", qty: "1 stalk" },
-      { name: "Spring onions, sliced", qty: "2" },
-      { name: "Sticky or steamed rice (to serve)", qty: "2 portions" },
-    ],
-    steps: [
-      "Make toasted rice powder: dry-toast raw jasmine rice in a pan until golden brown. Cool and grind to a coarse powder in a spice grinder.",
-      "Cook chicken in a pan over medium-high heat, breaking up lumps. Add 1 tbsp fish sauce while cooking. Remove from heat and cool slightly.",
-      "Combine warm (not hot) chicken with shallots, lemongrass, remaining fish sauce, lime juice and chilli flakes.",
-      "Stir in toasted rice powder — it gives the dish its signature nutty texture.",
-      "Fold in fresh mint, cilantro and spring onions.",
-      "Serve immediately with sticky rice and raw vegetables on the side."
-    ],
-    tip: "Toasted rice powder is the ingredient that defines larb — you can't substitute it. Make a big batch and store in a jar; it keeps for a month and goes in everything."
-  },
-  {
-    name: "Com Tam (Vietnamese Broken Rice)", desc: "Vietnamese broken rice plate with grilled lemongrass pork chop, pickled vegetables and nuoc cham.", emoji: "🍖", cats: ["asian","vietnamese","healthy","comfort"], time: "25 min", cal: "540 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Pork shoulder steaks or chops, thin", qty: "2" },
-      { name: "Broken jasmine rice (or regular jasmine rice)", qty: "200 g" },
-      { name: "Lemongrass stalks, finely minced", qty: "2" },
-      { name: "Garlic cloves, minced", qty: "3" },
-      { name: "Fish sauce", qty: "3 tbsp" },
-      { name: "Sugar", qty: "2 tbsp" },
-      { name: "Carrot and daikon, julienned", qty: "100 g each" },
-      { name: "Rice vinegar", qty: "2 tbsp" },
-      { name: "Lime juice", qty: "2 tbsp" },
-      { name: "Fresh cucumber slices and cilantro", qty: "to serve" },
-    ],
-    steps: [
-      "Marinate pork: mix lemongrass, garlic, 2 tbsp fish sauce, 1 tbsp sugar. Coat pork. Marinate 20 minutes minimum.",
-      "Pickle vegetables: toss carrot and daikon with rice vinegar, 1 tsp sugar and salt. Set aside.",
-      "Make nuoc cham: mix 1 tbsp fish sauce, lime juice, 1 tbsp sugar, 4 tbsp water, minced garlic and chilli.",
-      "Cook rice per instructions.",
-      "Grill or pan-sear pork over high heat 3 minutes per side until caramelised and cooked through. Rest briefly.",
-      "Plate rice, sliced pork, pickled veg, fresh cucumber and cilantro. Pour nuoc cham generously over everything."
-    ],
-    tip: "The marinade needs to caramelise in the pan — don't use oil. Add pork to a dry, very hot pan so the sugars char and create that smoky, lacquered crust."
-  },
-  {
-    name: "Spanakopita", desc: "Crispy phyllo pastry triangles filled with spinach, feta and herbs. Greek comfort food at its most satisfying.", emoji: "🥐", cats: ["mediterranean","vegetarian","comfort"], time: "30 min", cal: "390 kcal",
-    serves: 4,
-    ingredients: [
-      { name: "Phyllo pastry sheets", qty: "8" },
-      { name: "Fresh spinach (or frozen, squeezed dry)", qty: "400 g" },
-      { name: "Feta cheese, crumbled", qty: "200 g" },
-      { name: "Eggs", qty: "2" },
-      { name: "Onion, finely diced", qty: "1" },
-      { name: "Fresh dill, chopped", qty: "2 tbsp" },
-      { name: "Fresh parsley, chopped", qty: "2 tbsp" },
-      { name: "Butter or olive oil, melted", qty: "80 g" },
-      { name: "Nutmeg", qty: "pinch" },
-      { name: "Salt & pepper", qty: "to taste" },
-    ],
-    steps: [
-      "Wilt spinach in a pan. When cool, squeeze out all moisture — really squeeze. Roughly chop.",
-      "Mix spinach with feta, sautéed onion, eggs, dill, parsley and nutmeg. Season (carefully — feta is salty).",
-      "Lay a phyllo sheet on a board, brush with melted butter. Lay another sheet on top and brush again.",
-      "Cut the double layer into 3 strips. Place a spoonful of filling at one end of each strip.",
-      "Fold each strip into a triangle (like folding a flag). Brush top with butter.",
-      "Bake at 190°C / 375°F for 20–25 minutes until deep golden and crispy."
-    ],
-    tip: "Removing every drop of moisture from the spinach is the only rule — wet filling = soggy bottom. Salt the wilted spinach and let it drain in a colander, then wring it in a clean cloth."
-  },
-  {
-    name: "Hummus Power Bowl", desc: "Silky hummus with warm spiced chickpeas, roasted vegetables, tahini drizzle and toasted pine nuts.", emoji: "🫘", cats: ["middleeastern","mediterranean","vegetarian","healthy","quick"], time: "15 min", cal: "420 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Good-quality hummus", qty: "300 g" },
-      { name: "Canned chickpeas, drained", qty: "200 g" },
-      { name: "Smoked paprika", qty: "1 tsp" },
-      { name: "Cumin", qty: "½ tsp" },
-      { name: "Olive oil", qty: "4 tbsp" },
-      { name: "Cherry tomatoes, halved", qty: "100 g" },
-      { name: "Cucumber, diced", qty: "½" },
-      { name: "Tahini", qty: "2 tbsp" },
-      { name: "Lemon juice", qty: "2 tbsp" },
-      { name: "Pine nuts, toasted", qty: "2 tbsp" },
-      { name: "Fresh parsley", qty: "handful" },
-      { name: "Warm pita", qty: "2" },
-    ],
-    steps: [
-      "Toss chickpeas with paprika, cumin, salt and 1 tbsp olive oil. Pan-fry over medium-high heat 5 minutes until crispy.",
-      "Thin tahini with lemon juice and 2 tbsp water until it becomes a pourable sauce.",
-      "Spread hummus generously across two bowls, making a well in the centre.",
-      "Spoon warm chickpeas into the well. Arrange tomatoes and cucumber around.",
-      "Drizzle with tahini sauce and olive oil.",
-      "Scatter pine nuts and parsley. Serve with warm pita for scooping."
-    ],
-    tip: "Warm the hummus slightly before serving — cold hummus straight from the fridge has a muted flavour. A quick 30 seconds in the microwave transforms it."
-  },
-  {
-    name: "Korean BBQ Rice Bowl (Bulgogi)", desc: "Tender marinated beef bulgogi caramelised in the pan over steamed rice with kimchi and sesame spinach.", emoji: "🥩", cats: ["asian","korean","comfort","healthy"], time: "20 min", cal: "530 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Beef sirloin or ribeye, very thinly sliced", qty: "300 g" },
-      { name: "Steamed short-grain rice", qty: "2 bowls" },
-      { name: "Soy sauce", qty: "3 tbsp" },
-      { name: "Asian pear or kiwi, grated", qty: "2 tbsp" },
-      { name: "Sugar", qty: "1 tbsp" },
-      { name: "Sesame oil", qty: "2 tbsp" },
-      { name: "Garlic cloves, minced", qty: "3" },
-      { name: "Fresh ginger, grated", qty: "1 tsp" },
-      { name: "Spinach", qty: "100 g" },
-      { name: "Kimchi", qty: "100 g" },
-      { name: "Sesame seeds", qty: "1 tsp" },
-    ],
-    steps: [
-      "Marinate beef: combine soy sauce, grated pear, sugar, sesame oil, garlic and ginger. Add beef slices and marinate 15 minutes.",
-      "Blanch spinach in boiling water 30 seconds. Squeeze dry, toss with 1 tsp sesame oil and a pinch of salt.",
-      "Heat a pan or grill over very high heat. Cook beef in a single layer (don't crowd) 1–2 minutes per side until caramelised. Work in batches.",
-      "Arrange steamed rice in bowls. Top with bulgogi, sesame spinach and kimchi.",
-      "Drizzle any pan juices over the beef. Scatter sesame seeds."
-    ],
-    tip: "Grated Asian pear tenderises the beef through natural enzymes and also caramelises beautifully — it's the ingredient that makes Korean BBQ taste distinctively different."
-  },
-  {
-    name: "Mapo Eggplant (Mabodofu style)", desc: "Silky eggplant braised in a fiery, numbing Sichuan sauce with pork mince, black bean and chilli oil.", emoji: "🍆", cats: ["asian","chinese","vegetarian","comfort"], time: "20 min", cal: "370 kcal",
-    serves: 2,
-    ingredients: [
-      { name: "Eggplants, cut into batons", qty: "2 medium" },
-      { name: "Pork mince (or omit for vegetarian)", qty: "100 g" },
-      { name: "Doubanjiang (spicy bean paste)", qty: "2 tbsp" },
-      { name: "Fermented black beans, chopped", qty: "1 tbsp" },
-      { name: "Garlic cloves, minced", qty: "3" },
-      { name: "Fresh ginger, minced", qty: "1 tsp" },
-      { name: "Sichuan peppercorns, ground", qty: "½ tsp" },
-      { name: "Chicken or vegetable stock", qty: "200 ml" },
-      { name: "Soy sauce", qty: "1 tbsp" },
-      { name: "Cornstarch + water", qty: "1 tbsp each" },
-      { name: "Sesame oil & green onions", qty: "to finish" },
-    ],
-    steps: [
-      "Salt eggplant batons 10 minutes. Rinse and pat dry.",
-      "Deep-fry or roast eggplant until golden and soft. Set aside.",
-      "Fry pork mince in oil until cooked. Add doubanjiang and black beans — fry 1 minute until oil turns red.",
-      "Add garlic, ginger and Sichuan pepper. Cook 30 seconds.",
-      "Add stock and soy sauce. Bring to a boil. Add eggplant and simmer 3 minutes.",
-      "Stir in cornstarch slurry to thicken the sauce. Finish with sesame oil and green onions. Serve over rice."
-    ],
-    tip: "Salting and resting the eggplant draws out moisture so it absorbs the sauce instead of steaming. Don't skip this step or you'll get watery results."
+    tip: "盐葱酱要大方地放葱，葱的比例越高越香。用牛油果油拌酱口感更顺滑，也可以用香油代替。"
   },
 ];
 
@@ -2789,9 +2239,9 @@ function showResult(meal) {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         AllRecipes
       </a>
-      <a class="youtube-link" href="https://www.youtube.com/results?search_query=how+to+make+${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        Watch on YouTube
+      <a class="youtube-link" href="https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        小红书教程
       </a>
     </div>
   `;
@@ -2886,9 +2336,9 @@ function renderRecipe(meal, serves) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Find more ${meal.name} recipes on AllRecipes ↗
         </a>
-        <a class="allrecipes-drawer-link" href="https://www.youtube.com/results?search_query=how+to+make+${encodeURIComponent(meal.name)}" target="_blank" rel="noopener" style="border-color:#FF0000;color:#FF0000;margin-top:10px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          Watch how to make ${meal.name} on YouTube ↗
+        <a class="allrecipes-drawer-link" href="https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(meal.name)}" target="_blank" rel="noopener" style="border-color:#FF2442;color:#FF2442;margin-top:10px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+          在小红书搜索「${meal.name}」教程 ↗
         </a>
       </div>
     </div>
